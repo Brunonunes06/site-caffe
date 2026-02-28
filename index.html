@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ouro Negro | Café Artesanal & Gourmet</title>
+    <meta name="description"
+        content="Experimente o melhor café artesanal da cidade. Grãos selecionados, ambiente acolhedor e processos gourmet.">
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="./logo.png" type="image/png" style="width: 2000px; height: 2000px;">
+    <!-- Font Awesome for icons -->
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+
+<body>
+
+    <!-- Navigation -->
+    <nav id="navbar">
+        <a href="#" class="brand">OURO NEGRO</a>
+        <div class="nav-links">
+            <a href="#home">Início</a>
+            <a href="#menu">Cardápio</a>
+            <a href="#about">Nossa História</a>
+            <a href="#interior">O Espaço</a>
+            <a href="#contact">Contato</a>
+            <a href="javascript:void(0)" class="cart-link" id="cart-btn">
+                <i class="fas fa-shopping-cart"></i>
+                <span class="cart-count" id="cart-count">0</span>
+            </a>
+        </div>
+        <div class="mobile-menu-icon" style="display: none;">
+            <i class="fas fa-bars"></i>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="hero" id="home">
+        <div class="hero-content">
+            <h1>Desperte seus sentidos.</h1>
+            <p>Mais que um café, uma experiência sensorial completa em cada xícara.</p>
+            <a href="#menu" class="cta-button">Ver Cardápio</a>
+        </div>
+    </header>
+    <!-- Menu Section -->
+    <section id="menu">
+        <div class="section-title">
+            <h2>Nossas Especialidades</h2>
+            <div class="divider"></div>
+        </div>
+        <div class="menu-grid">
+            <div class="menu-item">
+                <h3>Espresso Intenso</h3>
+                <span class="price">R$ 8,50</span>
+                <img src="./espresso.png" alt="Espresso Intenso" class="img">
+                <p>O clássico italiano, curto e encorpado, com notas de chocolate amargo e avelã.</p>
+                <button class="btn add-to-cart" data-name="Espresso Intenso" data-price="8.50">
+                    Adicionar ao Carrinho</button>
+
+            </div>
+            <div class="menu-item">
+                <h3>Latte Art Premium</h3>
+                <span class="price">R$ 14,00</span>
+                <img src="./latte.png" alt="Latte Art Premium" class="img">
+                <p>Leite vaporizado sedoso sobre nosso espresso especial, finalizado com arte manual.</p>
+                <button class="btn add-to-cart" data-name="Latte Art Premium" data-price="14.00">
+                    Adicionar ao Carrinho</button>
+            </div>
+            <div class="menu-item">
+                <h3>Cappuccino Trufado</h3>
+                <span class="price">R$ 16,50</span>
+                <img src="./cappuccino.png" alt="Cappuccino Trufado" class="img">
+                <p>Camadas de café, leite cremoso e uma generosa porção de ganache de chocolate belga.</p>
+                <button class="btn add-to-cart" data-name="Cappuccino Trufado" data-price="16.50">
+                    Adicionar ao Carrinho</button>
+            </div>
+            <div class="menu-item">
+                <h3>Cold Brew Citrus</h3>
+                <span class="price">R$ 15,00</span>
+                <img src="./Cold-Brew-Citrus.png" alt="Cold Brew Citrus" class="img">
+                <p>Café extraído a frio por 18 horas, servido com gelo e um toque refrescante de limão siciliano.</p>
+                <button class="btn add-to-cart" data-name="Cold Brew Citrus" data-price="15.00">
+                    Adicionar ao Carrinho</button>
+            </div>
+            <div class="menu-item">
+                <h3>Mocha Branco</h3>
+                <span class="price">R$ 17,00</span>
+                <img src="./macha.png" alt="Mocha Branco" class="img">
+                <p>Mistura perfeita de café, chocolate branco derretido e chantilly artesanal.</p>
+                <br>
+                <button class="btn add-to-cart" data-name="Mocha Branco" data-price="17.00">
+                    Adicionar ao Carrinho</button>
+            </div>
+            <div class="menu-item">
+                <h3>Affogato Al Caffe</h3>
+                <span class="price">R$ 18,50</span>
+                <img src="./affoga.png" alt="Affogato Al Caffe" class="img">
+                <p>Uma bola de gelato de baunilha artesanal "afogada" em um shot de espresso quente.</p>
+                <button class="btn add-to-cart" data-name="Affogato Al Caffe" data-price="18.50">
+                    Adicionar ao Carrinho</button>
+            </div>
+            <div class="menu-item">
+                <h3>Café Royale Gelato</h3>
+                <span class="price">R$ 14,90</span>
+                <img src="./cafe_desenho.png" alt="Lee da Cu" class="img">
+                <p>Café quente intenso com sorvete cremoso Mistura perfeita do amargo com o doce Refrescante,
+                    sofisticado e cheio de sabor</p>
+                <button class="btn add-to-cart" data-name="Café Royale Gelato" data-price="14.90">
+                    Adicionar ao Carrinho
+                </button>
+            </div>
+            <div class="menu-item">
+                <h3>Chá Imperial D’Oro</h3>
+                <span class="price">R$ 12,50</span>
+                <img src="./royal.png" alt="Chá Imperial D’Oro" class="img">
+                <p>Uma infusão refinada de folhas selecionadas, com aroma delicado e sabor equilibrado, perfeita para
+                    momentos de elegância e tranquilidade.</p>
+                <button class="btn add-to-cart" data-name="Chá Imperial D’Oro" data-price="12.50">
+                    Adicionar ao Carrinho
+                </button>
+            </div>
+            <div class="menu-item">
+                <h3>Berry Delight</h3>
+                <span class="price">R$ 16,00</span>
+                <img src="./milkShakerMorango.png" alt="Berry Delight" class="img">
+                <p>Milkshake cremoso de morango com sorvete de baunilha, doce, refrescante e irresistível.</p>
+                <button class="btn add-to-cart" data-name="Berry Delight" data-price="16.00">
+                    Adicionar ao Carrinho
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="about">
+        <div class="about-img">
+            <img src="beans.png" alt="Grãos de café selecionados">
+        </div>
+        <div class="about-content">
+            <h2>A Arte do Grão</h2>
+            <p>No Ouro Negro, acreditamos que o café perfeito começa na terra. Selecionamos apenas grãos de pequenos
+                produtores nacionais, garantindo frescor e sustentabilidade em cada lote.</p>
+            <br>
+            <p>Nossa torra é feita semanalmente de forma artesanal, respeitando a personalidade única de cada variedade.
+                Seja você um entusiasta ou um conhecedor experiente, encontrará aqui o sabor que procura.</p>
+            <br>
+            <a href="#" class="cta-button"
+                style="background: transparent; color: var(--primary); border: 2px solid var(--accent);">Saiba Mais</a>
+        </div>
+    </section>
+
+    <!-- Interior Section -->
+    <section id="interior" class="interior">
+        <div class="section-title">
+            <h2>Um Refúgio Urbano</h2>
+            <div class="divider"></div>
+        </div>
+        <p>Projetado para ser seu segundo lar. Perfeito para uma reunião de negócios ou uma leitura tranquila.</p>
+        <div class="interior-img">
+            <img src="space.png" alt="Interior da cafeteria Ouro Negro">
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer id="contact">
+        <div class="footer-grid">
+            <div class="footer-col">
+                <a href="#" class="brand" style="color: var(--white); margin-bottom: 1rem; display: block;">OURO
+                    NEGRO</a>
+                <p>Elevando o padrão do seu café diário com paixão e técnica artesanal.</p>
+            </div>
+            <div class="footer-col">
+                <h4>Navegação</h4>
+                <a href="#home">Início</a>
+                <a href="#menu">Cardápio</a>
+                <a href="#about">História</a>
+                <a href="#contact">Localização</a>
+            </div>
+            <div class="footer-col">
+                <h4>Contatos</h4>
+                <p><i class="fas fa-map-marker-alt"></i> Rua dos Grãos, 123 - Centro</p>
+                <p><i class="fas fa-phone"></i> (11) 98765-4321</p>
+                <p><i class="fas fa-envelope"></i> ola@ouronegro.com</p>
+            </div>
+            <div class="footer-col">
+                <h4>Siga-nos</h4>
+                <div style="display: flex; gap: 1rem;">
+                    <a href="#"><i class="fab fa-instagram fa-lg"></i></a>
+                    <a href="#"><i class="fab fa-facebook fa-lg"></i></a>
+                    <a href="#"><i class="fab fa-whatsapp fa-lg"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 Ouro Negro Café Artesanal. Todos os direitos reservados.</p>
+        </div>
+    </footer>
+
+    <!-- Cart Modal -->
+    <div class="cart-modal" id="cart-modal">
+        <div class="cart-content">
+            <span class="close-cart" id="close-cart">&times;</span>
+            <h2>Seu Carrinho</h2>
+            <div class="divider" style="margin: 1rem 0;"></div>
+            <div class="cart-items-container" id="cart-items">
+                <!-- Items will be injected here -->
+                <p class="empty-cart-msg">O carrinho está vazio.</p>
+            </div>
+            <div class="cart-total">
+                <span>Total:</span>
+                <span id="cart-total-value">R$ 0,00</span>
+            </div>
+            <button class="checkout-btn" id="standard-checkout" style="margin-top: 2rem;">
+                Finalizar Pedido
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Navbar scroll effect
+        window.addEventListener('scroll', function () {
+            const nav = document.getElementById('navbar');
+            if (window.scrollY > 50) {
+                nav.classList.add('scrolled');
+            } else {
+                nav.classList.remove('scrolled');
+            }
+        });
+
+        // Smooth scroll for anchors
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                if (targetId === '#' || !targetId.startsWith('#')) return;
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    targetElement.scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+
+        // Mobile Menu Toggle
+        const menuIcon = document.querySelector('.mobile-menu-icon');
+        const navLinks = document.querySelector('.nav-links');
+
+        if (menuIcon && navLinks) {
+            menuIcon.addEventListener('click', () => {
+                navLinks.classList.toggle('active');
+            });
+
+            // Close menu when clicking a link
+            document.querySelectorAll('.nav-links a').forEach(link => {
+                link.addEventListener('click', () => {
+                    navLinks.classList.remove('active');
+                });
+            });
+        }
+
+        // Cart Logic
+        let cart = [];
+        const cartBtn = document.getElementById('cart-btn');
+        const cartModal = document.getElementById('cart-modal');
+        const closeCart = document.getElementById('close-cart');
+        const cartItemsContainer = document.getElementById('cart-items');
+        const cartCountBadge = document.getElementById('cart-count');
+        const cartTotalValue = document.getElementById('cart-total-value');
+
+        // Toggle Cart Modal
+        cartBtn.addEventListener('click', () => cartModal.classList.add('active'));
+        closeCart.addEventListener('click', () => cartModal.classList.remove('active'));
+        window.addEventListener('click', (e) => {
+            if (e.target === cartModal) cartModal.classList.remove('active');
+        });
+
+        // Add to Cart
+        document.querySelectorAll('.add-to-cart').forEach(button => {
+            button.addEventListener('click', () => {
+                const name = button.getAttribute('data-name');
+                const price = parseFloat(button.getAttribute('data-price'));
+                addItemToCart(name, price);
+                // cartModal.classList.add('active'); // Removed so it only shows in the badge
+            });
+        });
+
+        function addItemToCart(name, price) {
+            const existingItem = cart.find(item => item.name === name);
+            if (existingItem) {
+                existingItem.quantity += 1;
+            } else {
+                cart.push({ name, price, quantity: 1 });
+            }
+            updateCartUI();
+        }
+
+        function updateCartUI() {
+            const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+            cartCountBadge.innerText = totalItems;
+            if (totalItems > 0) {
+                cartCountBadge.classList.add('visible');
+            } else {
+                cartCountBadge.classList.remove('visible');
+            }
+
+            cartItemsContainer.innerHTML = '';
+            let total = 0;
+
+            if (cart.length === 0) {
+                cartItemsContainer.innerHTML = '<p class="empty-cart-msg">O carrinho está vazio.</p>';
+            } else {
+                cart.forEach((item, index) => {
+                    total += item.price * item.quantity;
+                    const itemElement = document.createElement('div');
+                    itemElement.className = 'cart-item';
+                    itemElement.innerHTML = `
+                        <div class="cart-item-info">
+                            <h4>${item.name}</h4>
+                            <span class="price">R$ ${(item.price * item.quantity).toFixed(2).replace('.', ',')}</span>
+                        </div>
+                        <div class="qty-controls">
+                            <button class="qty-btn" onclick="changeQty(${index}, -1)">-</button>
+                            <span class="qty-number">${item.quantity}</span>
+                            <button class="qty-btn" onclick="changeQty(${index}, 1)">+</button>
+                        </div>
+                    `;
+                    cartItemsContainer.appendChild(itemElement);
+                });
+            }
+            cartTotalValue.innerText = `R$ ${total.toFixed(2).replace('.', ',')}`;
+        }
+
+        window.changeQty = function (index, change) {
+            cart[index].quantity += change;
+            if (cart[index].quantity <= 0) {
+                cart.splice(index, 1);
+            }
+            updateCartUI();
+        };
+
+        document.getElementById('standard-checkout').addEventListener('click', () => {
+            if (cart.length === 0) {
+                alert("Seu carrinho está vazio!");
+                return;
+            }
+            alert("Pedido finalizado! Preparemos seu café com carinho.");
+            cart = [];
+            updateCartUI();
+            cartModal.classList.remove('active');
+        });
+    </script>
+</body>
+
+</html>
