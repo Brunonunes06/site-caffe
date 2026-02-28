@@ -377,7 +377,7 @@
                             </div>
                             <button class="miss-btn">Avaliar</button>
                         </div>
-                        <div class="mission-item" onclick="completeMission(10, 'mission-3')">
+                        <div class="mission-item" onclick="openShareModal()" id="mission-3">
                             <div class="miss-info">
                                 <strong>Indicar Amigo <i class="fas fa-user-plus" style="color:#D4A373"></i></strong>
                                 <span>Convide um amigo para o clube.</span>
@@ -413,6 +413,30 @@
                     </div>
                 </div>
             </div>
+        </div>
+    </div>
+
+    <!-- Share Social Modal -->
+    <div id="share-modal" class="auth-modal">
+        <div class="auth-content share-content">
+            <span class="close-auth" id="close-share">&times;</span>
+            <h2>Convidar Amigo</h2>
+            <p>Escolha por onde convidar seus amigos:</p>
+            <div class="share-grid">
+                <button class="share-btn whatsapp" onclick="shareOnSocial('whatsapp')">
+                    <i class="fab fa-whatsapp"></i> WhatsApp
+                </button>
+                <button class="share-btn instagram" onclick="shareOnSocial('instagram')">
+                    <i class="fab fa-instagram"></i> Instagram
+                </button>
+                <button class="share-btn copy" onclick="copyReferralLink()">
+                    <i class="fas fa-link"></i> Copiar Link
+                </button>
+                <button class="share-btn native" id="native-share-btn">
+                    <i class="fas fa-share-alt"></i> Outros Apps
+                </button>
+            </div>
+            <p class="share-bonus">Ganhe 10 pontos ao compartilhar!</p>
         </div>
     </div>
 
@@ -884,6 +908,81 @@
                 setTimeout(() => toast.remove(), 500);
             }, 3000);
         }
+
+        // Share System
+        const shareModal = document.getElementById('share-modal');
+        const closeShare = document.getElementById('close-share');
+
+        window.openShareModal = () => {
+            if (!isLoggedIn) return alert("Faça login para convidar amigos!");
+            authModal.classList.remove('active');
+            shareModal.classList.add('active');
+        };
+
+        closeShare.onclick = () => shareModal.classList.remove('active');
+
+        window.shareOnSocial = (platform) => {
+            const url = window.location.href;
+            const text = "Olha que café incrível! Entre no Clube Ouro Negro e ganhe pontos: ";
+            let shareUrl = "";
+
+            if (platform === 'whatsapp') {
+                shareUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(text + url)}`;
+            } else if (platform === 'instagram') {
+                alert("O Instagram não permite links diretos. Vamos copiar o link para você postar no seu Story ou Bio!");
+                copyReferralLink();
+                return;
+            }
+
+            window.open(shareUrl, '_blank');
+            rewardShare();
+        };
+
+        window.copyReferralLink = () => {
+            navigator.clipboard.writeText(window.location.href);
+            showNotification("Link copiado! Mande para seus amigos.");
+            rewardShare();
+        };
+
+        async function rewardShare() {
+            try {
+                const response = await fetch(`${API_URL}/update_points`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        email: currentUser.email,
+                        points: 10
+                    })
+                });
+                const res = await response.json();
+                userPoints = res.new_points;
+                updateLoyaltyUI();
+                showNotification("Valeu por compartilhar! +10 pontos.");
+
+                // Marca missão visualmente
+                const mission = document.getElementById('mission-3');
+                mission.style.opacity = '0.5';
+                mission.style.pointerEvents = 'none';
+                mission.querySelector('.miss-btn').innerText = "Concluído";
+
+                shareModal.classList.remove('active');
+            } catch (err) { console.error(err); }
+        }
+
+        document.getElementById('native-share-btn').onclick = async () => {
+            if (navigator.share) {
+                try {
+                    await navigator.share({
+                        title: 'Café Ouro Negro',
+                        text: 'Venha conhecer o melhor café do mundo!',
+                        url: window.location.href
+                    });
+                    rewardShare();
+                } catch (err) { console.log("Share cancelado"); }
+            } else {
+                copyReferralLink();
+            }
+        };
     </script>
 </body>
 
