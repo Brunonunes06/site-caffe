@@ -370,7 +370,7 @@
                             </div>
                             <span class="miss-pts">+20 pts</span>
                         </div>
-                        <div class="mission-item" onclick="completeMission(5, 'mission-2')">
+                        <div class="mission-item" onclick="showReviewModal()" id="mission-2">
                             <div class="miss-info">
                                 <strong>Avaliar Produto <i class="fas fa-star" style="color:#D4A373"></i></strong>
                                 <span>Dê sua opinião sobre nosso café.</span>
@@ -579,8 +579,6 @@
         let userPoints = 0;
         let orderHistory = [];
         let isLoggedIn = false;
-        let currentUser = null;
-        const API_URL = 'http://localhost:5000';
 
         // Google Login Handler
         window.handleCredentialResponse = (response) => {
@@ -610,38 +608,23 @@
             handleLogin(name, "https://ui-avatars.com/api/?name=" + name + "&background=D4A373&color=fff");
         });
 
-        async function handleLogin(name, picUrl, email = "") {
-            try {
-                const response = await fetch(`${API_URL}/login`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ name, email: email || name + "@caffe.com", pic: picUrl })
-                });
+        function handleLogin(name, picUrl, email = "") {
+            isLoggedIn = true;
+            authModal.classList.remove('active');
+            authBtn.style.display = 'none';
+            const userProfile = document.getElementById('user-profile');
+            document.getElementById('user-pic').src = picUrl;
+            document.getElementById('user-name').innerText = name;
+            userProfile.style.display = 'flex';
 
-                currentUser = await response.json();
-                userPoints = currentUser.points;
-                orderHistory = currentUser.orders;
-                isLoggedIn = true;
-
-                authModal.classList.remove('active');
-                authBtn.style.display = 'none';
-                const userProfile = document.getElementById('user-profile');
-                document.getElementById('user-pic').src = picUrl;
-                document.getElementById('user-name').innerText = currentUser.name;
-                userProfile.style.display = 'flex';
-
-                showNotification(`Bem-vindo, ${currentUser.name}!`);
-                document.getElementById('user-name-rank').innerText = currentUser.name;
-                updateLoyaltyUI();
-            } catch (err) {
-                console.error("Erro ao conectar com servidor Python:", err);
-                alert("O servidor Python não está rodando! Execute 'python server.py'");
-            }
+            showNotification(`Bem-vindo, ${name}!`);
+            document.getElementById('user-name-rank').innerText = name;
+            updateLoyaltyUI();
         }
 
         // Tab System Logic
         document.querySelectorAll('.tab-btn').forEach(btn => {
-            btn.addEventListener('click', async () => {
+            btn.addEventListener('click', () => {
                 const tabId = btn.getAttribute('data-tab');
                 document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
                 document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
@@ -652,34 +635,36 @@
             });
         });
 
-        async function loadRanking() {
-            try {
-                const response = await fetch(`${API_URL}/ranking`);
-                const ranking = await response.json();
-                const rankingList = document.querySelector('.ranking-list');
+        function loadRanking() {
+            const rankingList = document.querySelector('.ranking-list');
+            let html = `
+                <div class="rank-item top">
+                    <span class="pos">1º</span>
+                    <span class="name">Ana Silva</span>
+                    <span class="pts">1240 pts</span>
+                </div>
+                <div class="rank-item top">
+                    <span class="pos">2º</span>
+                    <span class="name">Marcos Oliveira</span>
+                    <span class="pts">980 pts</span>
+                </div>
+                <div class="rank-item top">
+                    <span class="pos">3º</span>
+                    <span class="name">Carla Santos</span>
+                    <span class="pts">850 pts</span>
+                </div>
+            `;
 
-                let html = ranking.map((user, index) => `
-                    <div class="rank-item ${index < 3 ? 'top' : ''}">
-                        <span class="pos">${index + 1}º</span>
-                        <span class="name">${user.name}</span>
-                        <span class="pts">${user.points} pts</span>
+            if (isLoggedIn) {
+                html += `
+                    <div class="rank-item user-current">
+                        <span class="pos">-</span>
+                        <span class="name">${document.getElementById('user-name').innerText} (Você)</span>
+                        <span class="pts">${userPoints} pts</span>
                     </div>
-                `).join('');
-
-                // Adiciona o usuário atual se logado
-                if (isLoggedIn) {
-                    html += `
-                        <div class="rank-item user-current">
-                            <span class="pos">-</span>
-                            <span class="name">${currentUser.name} (Você)</span>
-                            <span class="pts">${userPoints} pts</span>
-                        </div>
-                    `;
-                }
-                rankingList.innerHTML = html;
-            } catch (err) {
-                console.error("Erro ao carregar ranking:", err);
+                `;
             }
+            if (rankingList) rankingList.innerHTML = html;
         }
 
         window.showReviewModal = () => {
@@ -692,32 +677,17 @@
             if (product && rating) submitReview(product, rating, comment);
         };
 
-        async function submitReview(product, rating, comment) {
-            try {
-                const response = await fetch(`${API_URL}/add_review`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        email: currentUser.email,
-                        name: currentUser.name,
-                        product,
-                        rating,
-                        comment,
-                        date: new Date().toLocaleDateString('pt-BR')
-                    })
-                });
-                const res = await response.json();
-                userPoints += res.points_earned;
-                showNotification(`Avaliação enviada! +${res.points_earned} pontos.`);
-                updateLoyaltyUI();
+        function submitReview(product, rating, comment) {
+            userPoints += 5;
+            showNotification(`Avaliação enviada! +5 pontos.`);
+            updateLoyaltyUI();
 
-                // Marca a missão como concluída visualmente
-                const mission = document.getElementById('mission-2');
+            // Marca a missão como concluída visualmente
+            const mission = document.getElementById('mission-2');
+            if (mission) {
                 mission.style.opacity = '0.5';
                 mission.style.pointerEvents = 'none';
                 mission.querySelector('.miss-btn').innerText = "Concluído";
-            } catch (err) {
-                console.error("Erro ao enviar avaliação:", err);
             }
         }
 
@@ -819,7 +789,7 @@
         const newCheckout = originalCheckout.cloneNode(true);
         originalCheckout.parentNode.replaceChild(newCheckout, originalCheckout);
 
-        newCheckout.addEventListener('click', async () => {
+        newCheckout.addEventListener('click', () => {
             if (cart.length === 0) {
                 alert("Seu carrinho está vazio!");
                 return;
@@ -837,6 +807,7 @@
 
             const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
             const pointsEarned = Math.floor(total);
+            userPoints += pointsEarned;
 
             const newOrder = {
                 id: Math.floor(Math.random() * 9000) + 1000,
@@ -845,32 +816,14 @@
                 points: pointsEarned
             };
 
-            try {
-                const response = await fetch(`${API_URL}/update_points`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        email: currentUser.email,
-                        points: pointsEarned,
-                        order: newOrder
-                    })
-                });
+            orderHistory.unshift(newOrder);
+            updateLoyaltyUI();
+            showNotification(`Você ganhou ${pointsEarned} pontos!`);
 
-                const res = await response.json();
-                userPoints = res.new_points;
-                orderHistory.unshift(newOrder);
-
-                updateLoyaltyUI();
-                showNotification(`Você ganhou ${pointsEarned} pontos!`);
-
-                alert("Pedido finalizado! Preparemos seu café com carinho.");
-                cart = [];
-                updateCartUI();
-                cartModal.classList.remove('active');
-            } catch (err) {
-                console.error("Erro no checkout:", err);
-                alert("Erro ao conectar com o servidor para salvar pontos.");
-            }
+            alert("Pedido finalizado! Preparemos seu café com carinho.");
+            cart = [];
+            updateCartUI();
+            cartModal.classList.remove('active');
         });
 
         function showNotification(msg) {
