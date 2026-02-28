@@ -1324,12 +1324,18 @@ nav.scrolled .user-name {
 .badges-row {
     display: flex;
     justify-content: center;
+    align-items: center;
     gap: 15px;
+    flex-wrap: wrap;
+    /* Garante que se adapte a telas muito pequenas */
+    padding: 0 10px;
 }
 
 .badge-item {
-    width: 35px;
-    height: 35px;
+    width: clamp(35px, 8vw, 45px);
+    /* Tamanho adaptativo */
+    height: clamp(35px, 8vw, 45px);
+    flex-shrink: 0;
     background: white;
     border: 2px solid var(--accent);
     border-radius: 50%;
@@ -1337,7 +1343,7 @@ nav.scrolled .user-name {
     align-items: center;
     justify-content: center;
     color: var(--accent);
-    font-size: 1rem;
+    font-size: clamp(0.9rem, 2.5vw, 1.2rem);
     transition: var(--transition);
     position: relative;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
