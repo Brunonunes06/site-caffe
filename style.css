@@ -1296,3 +1296,83 @@ nav.scrolled .user-name {
     border: 1px solid var(--accent);
     margin-top: 10px;
 }
+
+/* Prestige & Badges Styles */
+.user-rank-badge {
+    padding: 2px 8px;
+    border-radius: 5px;
+    font-size: 0.65rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    color: white;
+    background: #CD7F32;
+    /* Bronze default */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.achievements-section {
+    margin: 20px 0;
+    text-align: center;
+}
+
+.achievements-section h4 {
+    font-size: 0.9rem;
+    color: var(--primary);
+    margin-bottom: 10px;
+}
+
+.badges-row {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+}
+
+.badge-item {
+    width: 35px;
+    height: 35px;
+    background: white;
+    border: 2px solid var(--accent);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--accent);
+    font-size: 1rem;
+    transition: var(--transition);
+    position: relative;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+}
+
+.badge-item.locked {
+    filter: grayscale(1);
+    opacity: 0.3;
+    border-color: #ccc;
+    color: #999;
+}
+
+.badge-item:not(.locked) {
+    animation: badgePop 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes badgePop {
+    0% {
+        transform: scale(0.5);
+        opacity: 0;
+    }
+
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+/* Tier specific styles for Dashboard card */
+.tier-ouro .loyalty-card {
+    background: linear-gradient(135deg, #BF953F, #FCF6BA, #B38728, #FBF5B7, #AA771C) !important;
+    color: #4a3300 !important;
+}
+
+.tier-prata .loyalty-card {
+    background: linear-gradient(135deg, #757F9A, #D7DDE8) !important;
+    color: #2c3e50 !important;
+}

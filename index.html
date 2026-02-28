@@ -37,6 +37,7 @@
                 <i class="fas fa-user"></i>
             </a>
             <div id="user-profile" class="user-profile" style="display: none;">
+                <div class="user-rank-badge" id="user-tier">Bronze</div>
                 <div class="points-badge">
                     <i class="fas fa-coffee"></i>
                     <span id="user-points">0</span> pts
@@ -309,6 +310,24 @@
                             <div class="progress-bar" id="points-progress" style="width: 0%"></div>
                         </div>
                         <p class="small-text">Ganhe 1 ponto a cada R$ 1,00 gasto!</p>
+                    </div>
+
+                    <div class="achievements-section">
+                        <h4>Conquistas</h4>
+                        <div class="badges-row">
+                            <div class="badge-item locked" title="Faça seu primeiro pedido" id="badge-first">
+                                <i class="fas fa-shopping-bag"></i>
+                            </div>
+                            <div class="badge-item locked" title="Atinja 100 pontos" id="badge-100">
+                                <i class="fas fa-award"></i>
+                            </div>
+                            <div class="badge-item locked" title="Resgate um prêmio" id="badge-gift">
+                                <i class="fas fa-gift"></i>
+                            </div>
+                            <div class="badge-item locked" title="Nível Ouro" id="badge-gold">
+                                <i class="fas fa-crown"></i>
+                            </div>
+                        </div>
                     </div>
 
                     <div class="reward-section">
@@ -635,6 +654,7 @@
                 return;
             }
             userPoints -= pts;
+            document.getElementById('badge-gift').classList.remove('locked');
             showNotification(`Prêmio resgatado: ${item}!`);
             updateLoyaltyUI();
         }
@@ -653,6 +673,28 @@
             document.getElementById('user-points').innerText = userPoints;
             document.getElementById('dash-points').innerText = `${userPoints} Pontos`;
             document.getElementById('user-pts-rank').innerText = `${userPoints} pts`;
+
+            // Lógica de Níveis
+            let tier = "Bronze";
+            let color = "#CD7F32";
+            if (userPoints > 500) {
+                tier = "Ouro";
+                color = "#FFD700";
+                document.getElementById('badge-gold').classList.remove('locked');
+            } else if (userPoints > 200) {
+                tier = "Prata";
+                color = "#C0C0C0";
+            }
+
+            const tierEl = document.getElementById('user-tier');
+            if (tierEl) {
+                tierEl.innerText = tier;
+                tierEl.style.background = color;
+            }
+
+            // Medalhas Automáticas
+            if (orderHistory.length > 0) document.getElementById('badge-first').classList.remove('locked');
+            if (userPoints >= 100) document.getElementById('badge-100').classList.remove('locked');
 
             const progress = (userPoints % 100);
             document.getElementById('points-progress').style.width = `${progress}%`;
