@@ -254,7 +254,9 @@
                     <span>ou entre com</span>
                 </div>
 
-                <div id="g_id_onload" data-client_id="YOUR_GOOGLE_CLIENT_ID" data-context="signin" data-ux_mode="popup"
+                <div id="g_id_onload"
+                    data-client_id="26159719847-pbm48bkdvn0kdojt74if1dh2s2bmnhi2.apps.googleusercontent.com"
+                    data-context="signin" data-ux_mode="popup" data-callback="handleCredentialResponse"
                     data-auto_prompt="false">
                 </div>
                 <div class="g_id_signin" data-type="standard" data-shape="pill" data-theme="outline"
@@ -472,6 +474,21 @@
         let userPoints = 0;
         let orderHistory = [];
         let isLoggedIn = false;
+
+        // Google Login Handler
+        window.handleCredentialResponse = (response) => {
+            const responsePayload = decodeJwtResponse(response.credential);
+            handleLogin(responsePayload.name, responsePayload.picture);
+        };
+
+        function decodeJwtResponse(token) {
+            let base64Url = token.split('.')[1];
+            let base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+            let jsonPayload = decodeURIComponent(window.atob(base64).split('').map(function (c) {
+                return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+            }).join(''));
+            return JSON.parse(jsonPayload);
+        }
 
         document.getElementById('login-form').addEventListener('submit', (e) => {
             e.preventDefault();
