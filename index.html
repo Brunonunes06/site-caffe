@@ -609,7 +609,7 @@
         // Google Login Handler
         window.handleCredentialResponse = (response) => {
             const responsePayload = decodeJwtResponse(response.credential);
-            handleLogin(responsePayload.name, responsePayload.picture);
+            handleLogin(responsePayload.name, responsePayload.picture, responsePayload.email);
         };
 
         function decodeJwtResponse(token) {
@@ -625,13 +625,14 @@
             e.preventDefault();
             const email = e.target.querySelector('input[type="email"]').value;
             const name = email.split('@')[0];
-            handleLogin(name, "https://ui-avatars.com/api/?name=" + name + "&background=D4A373&color=fff");
+            handleLogin(name, "https://ui-avatars.com/api/?name=" + name + "&background=D4A373&color=fff", email);
         });
 
         document.getElementById('register-form').addEventListener('submit', (e) => {
             e.preventDefault();
             const name = e.target.querySelector('input[type="text"]').value;
-            handleLogin(name, "https://ui-avatars.com/api/?name=" + name + "&background=D4A373&color=fff");
+            const email = e.target.querySelector('input[type="email"]').value;
+            handleLogin(name, "https://ui-avatars.com/api/?name=" + name + "&background=D4A373&color=fff", email);
         });
 
         async function handleLogin(name, picUrl, email = "") {
