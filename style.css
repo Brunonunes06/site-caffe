@@ -690,3 +690,347 @@ footer {
     color: var(--text-light);
     padding: 2rem 0;
 }
+
+/* Auth Modal Styles */
+.auth-link {
+    font-size: 1.2rem;
+    color: white;
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+}
+
+nav.scrolled .auth-link {
+    color: var(--text);
+}
+
+.auth-link:hover {
+    color: var(--accent);
+}
+
+.auth-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(8px);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 2100;
+    padding: 20px;
+}
+
+.auth-modal.active {
+    display: flex;
+}
+
+.auth-content {
+    background: var(--white);
+    width: 100%;
+    max-width: 400px;
+    padding: 3rem 2.5rem;
+    border-radius: 25px;
+    position: relative;
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+    animation: modalSlideIn 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.close-auth {
+    position: absolute;
+    top: 1.5rem;
+    right: 1.5rem;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: var(--text-light);
+    transition: var(--transition);
+}
+
+.close-auth:hover {
+    color: var(--primary);
+}
+
+.auth-box h2 {
+    font-size: 2rem;
+    color: var(--primary);
+    margin-bottom: 0.5rem;
+    text-align: center;
+}
+
+.auth-box p {
+    color: var(--text-light);
+    font-size: 0.9rem;
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.input-group {
+    margin-bottom: 1.5rem;
+}
+
+.input-group label {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: var(--primary);
+}
+
+.input-group input {
+    width: 100%;
+    padding: 0.8rem 1.2rem;
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    font-family: inherit;
+    transition: var(--transition);
+}
+
+.input-group input:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 4px rgba(212, 163, 115, 0.1);
+}
+
+.auth-submit {
+    width: 100%;
+    padding: 1rem;
+    background: var(--primary);
+    color: var(--white);
+    border: none;
+    border-radius: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+    margin-bottom: 1.5rem;
+}
+
+.auth-submit:hover {
+    background: var(--secondary);
+    transform: translateY(-2px);
+}
+
+.auth-divider {
+    text-align: center;
+    position: relative;
+    margin: 2rem 0;
+}
+
+.auth-divider::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 100%;
+    height: 1px;
+    background: #eee;
+}
+
+.auth-divider span {
+    background: var(--white);
+    padding: 0 1rem;
+    position: relative;
+    color: var(--text-light);
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.auth-switch {
+    text-align: center;
+    margin-top: 2rem;
+    font-size: 0.9rem;
+}
+
+.auth-switch a {
+    color: var(--accent);
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.auth-switch a:hover {
+    text-decoration: underline;
+}
+
+/* Responsividade Auth */
+@media (max-width: 480px) {
+    .auth-content {
+        padding: 2.5rem 1.5rem;
+    }
+}
+
+/* User Profile Styles */
+.user-profile {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: rgba(212, 163, 115, 0.15);
+    padding: 5px 15px 5px 5px;
+    border-radius: 50px;
+    transition: var(--transition);
+}
+
+.user-avatar {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--accent);
+}
+
+.user-name {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: white;
+}
+
+nav.scrolled .user-name {
+    color: var(--primary);
+}
+
+.logout-icon {
+    background: none;
+    border: none;
+    color: var(--accent);
+    cursor: pointer;
+    font-size: 1rem;
+    padding: 5px;
+    display: flex;
+    align-items: center;
+    transition: var(--transition);
+}
+
+.logout-icon:hover {
+    color: #ff4757;
+    transform: scale(1.1);
+}
+
+/* Toast Notification */
+.toast-notification {
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%) translateY(100px);
+    background: var(--primary);
+    color: white;
+    padding: 1rem 2rem;
+    border-radius: 50px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    z-index: 3000;
+    transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.5s;
+    opacity: 0;
+    pointer-events: none;
+    font-weight: 600;
+}
+
+.toast-notification.show {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
+}
+
+/* Dashboard & Loyalty Styles */
+.points-badge {
+    background: var(--accent);
+    color: white;
+    padding: 2px 10px;
+    border-radius: 50px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.loyalty-card {
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    color: white;
+    padding: 1.5rem;
+    border-radius: 20px;
+    margin-bottom: 2rem;
+    box-shadow: 0 10px 20px rgba(44, 30, 18, 0.2);
+}
+
+.card-info span {
+    font-size: 0.8rem;
+    opacity: 0.8;
+}
+
+.card-info h3 {
+    font-size: 1.8rem;
+    color: var(--accent) !important;
+    margin: 5px 0;
+}
+
+.progress-container {
+    background: rgba(255, 255, 255, 0.1);
+    height: 8px;
+    border-radius: 10px;
+    margin: 15px 0;
+    overflow: hidden;
+}
+
+.progress-bar {
+    height: 100%;
+    background: var(--accent);
+    transition: width 1s ease-in-out;
+}
+
+.small-text {
+    font-size: 0.75rem !important;
+    opacity: 0.9;
+    text-align: left !important;
+    margin-bottom: 0 !important;
+}
+
+/* Order History */
+.history-section h4 {
+    color: var(--primary);
+    margin-bottom: 1rem;
+    font-family: 'Playfair Display', serif;
+}
+
+.history-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    background: #fdf8f3;
+    border-radius: 12px;
+    margin-bottom: 10px;
+    border-left: 4px solid var(--accent);
+}
+
+.hist-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.hist-info strong {
+    font-size: 0.9rem;
+    color: var(--primary);
+}
+
+.hist-info span {
+    font-size: 0.8rem;
+    color: var(--text-light);
+}
+
+.hist-total {
+    font-weight: 700;
+    color: var(--primary);
+}
+
+.empty-history {
+    text-align: center;
+    color: var(--text-light);
+    font-style: italic;
+    padding: 1rem 0;
+}
+
+/* Hover effect on profile trigger */
+.user-profile:hover {
+    background: rgba(212, 163, 115, 0.25);
+    transform: scale(1.02);
+    cursor: pointer;
+}

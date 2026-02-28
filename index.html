@@ -12,6 +12,7 @@
     <!-- Font Awesome for icons -->
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 
 <body>
@@ -29,6 +30,19 @@
                 <i class="fas fa-shopping-cart"></i>
                 <span class="cart-count" id="cart-count">0</span>
             </a>
+            <a href="javascript:void(0)" class="auth-link" id="auth-btn">
+                <i class="fas fa-user"></i>
+            </a>
+            <!-- Perfil do Usuário (Inicialmente Oculto) -->
+            <div id="user-profile" class="user-profile" style="display: none;">
+                <div class="points-badge">
+                    <i class="fas fa-coffee"></i>
+                    <span id="user-points">0</span> pts
+                </div>
+                <img src="" id="user-pic" alt="User" class="user-avatar" id="profile-trigger">
+                <span id="user-name" class="user-name"></span>
+                <button id="logout-btn" class="logout-icon"><i class="fas fa-sign-out-alt"></i></button>
+            </div>
         </div>
         <div class="mobile-menu-icon" style="display: none;">
             <i class="fas fa-bars"></i>
@@ -217,6 +231,84 @@
         </div>
     </div>
 
+    <!-- Auth Modal -->
+    <div class="auth-modal" id="auth-modal">
+        <div class="auth-content">
+            <span class="close-auth" id="close-auth">&times;</span>
+            <div class="auth-box" id="login-box">
+                <h2>Bem-vindo de volta</h2>
+                <p>Entre para acompanhar seus pedidos e ganhar pontos.</p>
+                <form id="login-form">
+                    <div class="input-group">
+                        <label>Email</label>
+                        <input type="email" placeholder="seu@email.com" required>
+                    </div>
+                    <div class="input-group">
+                        <label>Senha</label>
+                        <input type="password" placeholder="••••••••" required>
+                    </div>
+                    <button type="submit" class="auth-submit">Entrar</button>
+                </form>
+
+                <div class="auth-divider">
+                    <span>ou entre com</span>
+                </div>
+
+                <div id="g_id_onload" data-client_id="YOUR_GOOGLE_CLIENT_ID" data-context="signin" data-ux_mode="popup"
+                    data-auto_prompt="false">
+                </div>
+                <div class="g_id_signin" data-type="standard" data-shape="pill" data-theme="outline"
+                    data-text="signin_with" data-size="large" data-logo_alignment="left" data-width="100%">
+                </div>
+
+                <p class="auth-switch">Não tem uma conta? <a href="javascript:void(0)" id="show-register">Criar
+                        conta</a></p>
+            </div>
+
+            <div class="auth-box" id="register-box" style="display: none;">
+                <h2>Criar Conta</h2>
+                <p>Junte-se ao nosso clube de amantes de café.</p>
+                <form id="register-form">
+                    <div class="input-group">
+                        <label>Nome Completo</label>
+                        <input type="text" placeholder="Seu Nome" required>
+                    </div>
+                    <div class="input-group">
+                        <label>Email</label>
+                        <input type="email" placeholder="seu@email.com" required>
+                    </div>
+                    <div class="input-group">
+                        <label>Senha</label>
+                        <input type="password" placeholder="••••••••" required>
+                    </div>
+                    <button type="submit" class="auth-submit">Criar Conta</button>
+                </form>
+                <p class="auth-switch">Já tem uma conta? <a href="javascript:void(0)" id="show-login">Fazer Login</a>
+                </p>
+            </div>
+            <div class="auth-box" id="dashboard-box" style="display: none;">
+                <h2>Minha Conta</h2>
+                <div class="loyalty-card">
+                    <div class="card-info">
+                        <span>Seu Saldo:</span>
+                        <h3 id="dash-points">0 Pontos</h3>
+                    </div>
+                    <div class="progress-container">
+                        <div class="progress-bar" id="points-progress" style="width: 0%"></div>
+                    </div>
+                    <p class="small-text">Faltam <span id="points-needed">100</span> pontos para um café grátis!</p>
+                </div>
+
+                <div class="history-section">
+                    <h4>Últimos Pedidos</h4>
+                    <div id="order-history-list">
+                        <p class="empty-history">Nenhum pedido realizado ainda.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
         // Navbar scroll effect
         window.addEventListener('scroll', function () {
@@ -350,6 +442,152 @@
             updateCartUI();
             cartModal.classList.remove('active');
         });
+
+        // Auth Modal Logic
+        const authBtn = document.getElementById('auth-btn');
+        const authModal = document.getElementById('auth-modal');
+        const closeAuth = document.getElementById('close-auth');
+        const loginBox = document.getElementById('login-box');
+        const registerBox = document.getElementById('register-box');
+        const showRegister = document.getElementById('show-register');
+        const showLogin = document.getElementById('show-login');
+
+        authBtn.addEventListener('click', () => authModal.classList.add('active'));
+        closeAuth.addEventListener('click', () => authModal.classList.remove('active'));
+
+        window.addEventListener('click', (e) => {
+            if (e.target === authModal) authModal.classList.remove('active');
+        });
+
+        showRegister.addEventListener('click', () => {
+            loginBox.style.display = 'none';
+            registerBox.style.display = 'block';
+        });
+
+        showLogin.addEventListener('click', () => {
+            registerBox.style.display = 'none';
+            loginBox.style.display = 'block';
+        });
+
+        let userPoints = 0;
+        let orderHistory = [];
+        let isLoggedIn = false;
+
+        document.getElementById('login-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const email = e.target.querySelector('input[type="email"]').value;
+            const name = email.split('@')[0];
+            handleLogin(name, "https://ui-avatars.com/api/?name=" + name + "&background=D4A373&color=fff");
+        });
+
+        document.getElementById('register-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const name = e.target.querySelector('input[type="text"]').value;
+            handleLogin(name, "https://ui-avatars.com/api/?name=" + name + "&background=D4A373&color=fff");
+        });
+
+        function handleLogin(name, picUrl) {
+            isLoggedIn = true;
+            authModal.classList.remove('active');
+            authBtn.style.display = 'none';
+            const userProfile = document.getElementById('user-profile');
+            document.getElementById('user-pic').src = picUrl;
+            document.getElementById('user-name').innerText = name;
+            userProfile.style.display = 'flex';
+
+            showNotification(`Bem-vindo, ${name}!`);
+            updateLoyaltyUI();
+        }
+
+        // Abre Dashboard ao clicar no perfil
+        document.getElementById('user-profile').addEventListener('click', (e) => {
+            if (e.target.id === 'logout-btn' || e.target.closest('#logout-btn')) return;
+
+            loginBox.style.display = 'none';
+            registerBox.style.display = 'none';
+            document.getElementById('dashboard-box').style.display = 'block';
+            authModal.classList.add('active');
+        });
+
+        function updateLoyaltyUI() {
+            document.getElementById('user-points').innerText = userPoints;
+            document.getElementById('dash-points').innerText = `${userPoints} Pontos`;
+
+            const progress = (userPoints % 100);
+            document.getElementById('points-progress').style.width = `${progress}%`;
+            document.getElementById('points-needed').innerText = (100 - progress);
+
+            renderHistory();
+        }
+
+        function renderHistory() {
+            const list = document.getElementById('order-history-list');
+            if (orderHistory.length === 0) return;
+
+            list.innerHTML = orderHistory.map(order => `
+                <div class="history-item">
+                    <div class="hist-info">
+                        <strong>Pedido #${order.id}</strong>
+                        <span>${order.date}</span>
+                    </div>
+                    <span class="hist-total">R$ ${order.total.toFixed(2).replace('.', ',')}</span>
+                </div>
+            `).join('');
+        }
+
+        document.getElementById('logout-btn').addEventListener('click', (e) => {
+            e.stopPropagation();
+            isLoggedIn = false;
+            document.getElementById('user-profile').style.display = 'none';
+            authBtn.style.display = 'flex';
+            showNotification('Você saiu da conta.');
+        });
+
+        // Modifica o checkout para salvar histórico e pontos
+        const originalCheckout = document.getElementById('standard-checkout');
+        const newCheckout = originalCheckout.cloneNode(true);
+        originalCheckout.parentNode.replaceChild(newCheckout, originalCheckout);
+
+        newCheckout.addEventListener('click', () => {
+            if (cart.length === 0) {
+                alert("Seu carrinho está vazio!");
+                return;
+            }
+
+            const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+
+            if (isLoggedIn) {
+                const pointsEarned = Math.floor(total);
+                userPoints += pointsEarned;
+
+                const newOrder = {
+                    id: Math.floor(Math.random() * 9000) + 1000,
+                    date: new Date().toLocaleDateString('pt-BR'),
+                    total: total,
+                    points: pointsEarned
+                };
+                orderHistory.unshift(newOrder);
+                updateLoyaltyUI();
+                showNotification(`Você ganhou ${pointsEarned} pontos!`);
+            }
+
+            alert("Pedido finalizado! Preparemos seu café com carinho.");
+            cart = [];
+            updateCartUI();
+            cartModal.classList.remove('active');
+        });
+
+        function showNotification(msg) {
+            const toast = document.createElement('div');
+            toast.className = 'toast-notification';
+            toast.innerText = msg;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.classList.add('show'), 100);
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => toast.remove(), 500);
+            }, 3000);
+        }
     </script>
 </body>
 
