@@ -1087,3 +1087,212 @@ nav.scrolled .user-name {
     transform: scale(1.02);
     cursor: pointer;
 }
+
+/* Gamification & Dashboard Tabs */
+.dash-tabs {
+    display: flex;
+    gap: 5px;
+    margin-bottom: 20px;
+    padding: 5px;
+    background: #f8f3ee;
+    border-radius: 12px;
+}
+
+.tab-btn {
+    flex: 1;
+    padding: 8px;
+    border: none;
+    background: none;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-light);
+    cursor: pointer;
+    border-radius: 8px;
+    transition: var(--transition);
+}
+
+.tab-btn.active {
+    background: var(--white);
+    color: var(--primary);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+}
+
+.tab-content {
+    display: none;
+    animation: dashFadeIn 0.4s ease;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+@keyframes dashFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Rewards Grid */
+.reward-section {
+    margin: 20px 0;
+}
+
+.reward-section h4 {
+    margin-bottom: 12px;
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+}
+
+.reward-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+}
+
+.reward-item {
+    background: #fff;
+    border: 1px solid #eee;
+    padding: 12px 8px;
+    border-radius: 15px;
+    text-align: center;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.reward-item:hover {
+    border-color: var(--accent);
+    background: #fdf8f3;
+}
+
+.reward-item i {
+    display: block;
+    font-size: 1.5rem;
+    color: var(--accent);
+    margin-bottom: 5px;
+}
+
+.reward-item span {
+    display: block;
+    font-size: 0.75rem;
+    font-weight: 700;
+}
+
+.reward-item small {
+    display: block;
+    font-size: 0.65rem;
+    color: white;
+    background: var(--primary);
+    padding: 2px 6px;
+    border-radius: 10px;
+    margin-top: 5px;
+}
+
+/* Missions List */
+.missions-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.mission-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px;
+    background: #fdf8f3;
+    border-radius: 15px;
+    border: 1px solid transparent;
+}
+
+.miss-info {
+    text-align: left;
+}
+
+.miss-info strong {
+    display: block;
+    font-size: 0.85rem;
+    color: var(--primary);
+}
+
+.miss-info span {
+    font-size: 0.7rem;
+    color: var(--text-light);
+}
+
+.miss-pts {
+    background: var(--accent);
+    color: white;
+    padding: 4px 8px;
+    border-radius: 10px;
+    font-weight: 700;
+    font-size: 0.75rem;
+}
+
+.miss-btn {
+    padding: 6px 12px;
+    background: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.miss-btn:hover {
+    background: var(--secondary);
+}
+
+/* Ranking List */
+.ranking-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.rank-item {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 12px;
+    background: #fff;
+    border-radius: 12px;
+    border-bottom: 1px solid #eee;
+}
+
+.rank-item .pos {
+    width: 25px;
+    font-weight: 900;
+    color: var(--text-light);
+}
+
+.rank-item.top .pos {
+    color: var(--accent);
+    font-size: 1.1rem;
+}
+
+.rank-item .name {
+    flex: 1;
+    font-weight: 600;
+    font-size: 0.9rem;
+    text-align: left;
+}
+
+.rank-item .pts {
+    font-weight: 700;
+    color: var(--primary);
+    font-size: 0.85rem;
+}
+
+.rank-item.user-current {
+    background: rgba(212, 163, 115, 0.1);
+    border: 1px solid var(--accent);
+    margin-top: 10px;
+}

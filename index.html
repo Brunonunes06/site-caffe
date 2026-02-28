@@ -292,22 +292,104 @@
                 </p>
             </div>
             <div class="auth-box" id="dashboard-box" style="display: none;">
-                <h2>Minha Conta</h2>
-                <div class="loyalty-card">
-                    <div class="card-info">
-                        <span>Seu Saldo:</span>
-                        <h3 id="dash-points">0 Pontos</h3>
-                    </div>
-                    <div class="progress-container">
-                        <div class="progress-bar" id="points-progress" style="width: 0%"></div>
-                    </div>
-                    <p class="small-text">Faltam <span id="points-needed">100</span> pontos para um café grátis!</p>
+                <div class="dash-tabs">
+                    <button class="tab-btn active" data-tab="tab-perfil">Perfil</button>
+                    <button class="tab-btn" data-tab="tab-missoes">Missões</button>
+                    <button class="tab-btn" data-tab="tab-ranking">Ranking</button>
                 </div>
 
-                <div class="history-section">
-                    <h4>Últimos Pedidos</h4>
-                    <div id="order-history-list">
-                        <p class="empty-history">Nenhum pedido realizado ainda.</p>
+                <!-- Tab Perfil -->
+                <div class="tab-content active" id="tab-perfil">
+                    <div class="loyalty-card">
+                        <div class="card-info">
+                            <span>Seu Saldo:</span>
+                            <h3 id="dash-points">0 Pontos</h3>
+                        </div>
+                        <div class="progress-container">
+                            <div class="progress-bar" id="points-progress" style="width: 0%"></div>
+                        </div>
+                        <p class="small-text">Ganhe 1 ponto a cada R$ 1,00 gasto!</p>
+                    </div>
+
+                    <div class="reward-section">
+                        <h4>Resgatar Recompensas</h4>
+                        <div class="reward-grid">
+                            <div class="reward-item" onclick="redeemPoints(50, 'Café Espresso Grátis')">
+                                <i class="fas fa-coffee"></i>
+                                <span>Espresso</span>
+                                <small>50 pts</small>
+                            </div>
+                            <div class="reward-item" onclick="redeemPoints(150, 'Caneca Ouro Negro')">
+                                <i class="fas fa-mug-hot"></i>
+                                <span>Caneca</span>
+                                <small>150 pts</small>
+                            </div>
+                            <div class="reward-item" onclick="redeemPoints(300, 'Pacote de Grãos 250g')">
+                                <i class="fas fa-seedling"></i>
+                                <span>Grãos</span>
+                                <small>300 pts</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="history-section">
+                        <h4>Últimos Pedidos</h4>
+                        <div id="order-history-list">
+                            <p class="empty-history">Nenhum pedido realizado ainda.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab Missões -->
+                <div class="tab-content" id="tab-missoes">
+                    <div class="missions-list">
+                        <div class="mission-item" id="mission-1">
+                            <div class="miss-info">
+                                <strong>Primeira Compra</strong>
+                                <span>Ganhe pontos no seu primeiro pedido.</span>
+                            </div>
+                            <span class="miss-pts">+20 pts</span>
+                        </div>
+                        <div class="mission-item" onclick="completeMission(5, 'mission-2')">
+                            <div class="miss-info">
+                                <strong>Avaliar Produto <i class="fas fa-star" style="color:#D4A373"></i></strong>
+                                <span>Dê sua opinião sobre nosso café.</span>
+                            </div>
+                            <button class="miss-btn">Avaliar</button>
+                        </div>
+                        <div class="mission-item" onclick="completeMission(10, 'mission-3')">
+                            <div class="miss-info">
+                                <strong>Indicar Amigo <i class="fas fa-user-plus" style="color:#D4A373"></i></strong>
+                                <span>Convide um amigo para o clube.</span>
+                            </div>
+                            <button class="miss-btn">Convidar</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab Ranking -->
+                <div class="tab-content" id="tab-ranking">
+                    <div class="ranking-list">
+                        <div class="rank-item top">
+                            <span class="pos">1º</span>
+                            <span class="name">Ana Silva</span>
+                            <span class="pts">1240 pts</span>
+                        </div>
+                        <div class="rank-item top">
+                            <span class="pos">2º</span>
+                            <span class="name">Marcos Oliveira</span>
+                            <span class="pts">980 pts</span>
+                        </div>
+                        <div class="rank-item top">
+                            <span class="pos">3º</span>
+                            <span class="name">Carla Santos</span>
+                            <span class="pts">850 pts</span>
+                        </div>
+                        <div class="rank-item user-current">
+                            <span class="pos">12º</span>
+                            <span class="name" id="user-name-rank">Você</span>
+                            <span class="pts" id="user-pts-rank">0 pts</span>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -516,6 +598,44 @@
             userProfile.style.display = 'flex';
 
             showNotification(`Bem-vindo, ${name}!`);
+            document.getElementById('user-name-rank').innerText = name;
+            updateLoyaltyUI();
+        }
+
+        // Tab System Logic
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const tabId = btn.getAttribute('data-tab');
+                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                btn.classList.add('active');
+                document.getElementById(tabId).classList.add('active');
+            });
+        });
+
+        window.completeMission = (pts, elementId) => {
+            if (!isLoggedIn) {
+                alert("Faça login para completar missões!");
+                return;
+            }
+            userPoints += pts;
+            showNotification(`Missão concluída! +${pts} pontos.`);
+            updateLoyaltyUI();
+
+            const item = document.getElementById(elementId) || event.currentTarget;
+            item.style.opacity = '0.5';
+            item.style.pointerEvents = 'none';
+            const btn = item.querySelector('.miss-btn');
+            if (btn) btn.innerText = "Concluído";
+        };
+
+        window.redeemPoints = (pts, item) => {
+            if (userPoints < pts) {
+                alert("Você não tem pontos suficientes!");
+                return;
+            }
+            userPoints -= pts;
+            showNotification(`Prêmio resgatado: ${item}!`);
             updateLoyaltyUI();
         }
 
@@ -532,10 +652,10 @@
         function updateLoyaltyUI() {
             document.getElementById('user-points').innerText = userPoints;
             document.getElementById('dash-points').innerText = `${userPoints} Pontos`;
+            document.getElementById('user-pts-rank').innerText = `${userPoints} pts`;
 
             const progress = (userPoints % 100);
             document.getElementById('points-progress').style.width = `${progress}%`;
-            document.getElementById('points-needed').innerText = (100 - progress);
 
             renderHistory();
         }
@@ -574,22 +694,32 @@
                 return;
             }
 
+            if (!isLoggedIn) {
+                alert("Você precisa estar logado para finalizar o pedido!");
+                cartModal.classList.remove('active');
+
+                // Abre o modal de autenticação no modo login
+                registerBox.style.display = 'none';
+                document.getElementById('dashboard-box').style.display = 'none';
+                loginBox.style.display = 'block';
+                authModal.classList.add('active');
+                return;
+            }
+
             const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
 
-            if (isLoggedIn) {
-                const pointsEarned = Math.floor(total);
-                userPoints += pointsEarned;
+            const pointsEarned = Math.floor(total);
+            userPoints += pointsEarned;
 
-                const newOrder = {
-                    id: Math.floor(Math.random() * 9000) + 1000,
-                    date: new Date().toLocaleDateString('pt-BR'),
-                    total: total,
-                    points: pointsEarned
-                };
-                orderHistory.unshift(newOrder);
-                updateLoyaltyUI();
-                showNotification(`Você ganhou ${pointsEarned} pontos!`);
-            }
+            const newOrder = {
+                id: Math.floor(Math.random() * 9000) + 1000,
+                date: new Date().toLocaleDateString('pt-BR'),
+                total: total,
+                points: pointsEarned
+            };
+            orderHistory.unshift(newOrder);
+            updateLoyaltyUI();
+            showNotification(`Você ganhou ${pointsEarned} pontos!`);
 
             alert("Pedido finalizado! Preparemos seu café com carinho.");
             cart = [];
