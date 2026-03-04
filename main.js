@@ -557,3 +557,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
     updateRanking();
 });
+
+{
+  name: "Bruno",
+  email: "bruno@email.com",
+  points: 150
+}
