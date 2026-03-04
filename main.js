@@ -244,7 +244,7 @@ document.querySelectorAll(".tab-btn").forEach((btn) => {
     btn.classList.add("active");
     document.getElementById(tabId).classList.add("active");
 
-    if (tabId === "tab-ranking") loadRanking();
+    if (tabId === "tab-ranking") updateRanking();
   });
 });
 
@@ -513,57 +513,70 @@ if (contatoForm) {
 }
 
 // RANKING PONTOS 
-document.addEventListener("DOMContentLoaded", function () {
+/* =====================================================
+   RANKING GLOBAL COM LOCALSTORAGE (CÓDIGO ÚNICO)
+===================================================== */
 
-    function getUsers() {
-        return JSON.parse(localStorage.getItem("users")) || [];
+function getUsers() {
+  return JSON.parse(localStorage.getItem("users")) || [];
+}
+
+function saveUsers(users) {
+  localStorage.setItem("users", JSON.stringify(users));
+}
+
+function saveOrUpdateCurrentUser() {
+  if (!isLoggedIn || !currentUserEmail) return;
+
+  let users = getUsers();
+  const index = users.findIndex(u => u.email === currentUserEmail);
+
+  const userData = {
+    name: document.getElementById("user-name").innerText,
+    email: currentUserEmail,
+    points: userPoints
+  };
+
+  if (index !== -1) {
+    users[index] = userData;
+  } else {
+    users.push(userData);
+  }
+
+  saveUsers(users);
+}
+
+function updateRanking() {
+  const rankingList = document.querySelector(".ranking-list");
+  if (!rankingList) return;
+
+  let users = getUsers();
+
+  if (users.length === 0) {
+    rankingList.innerHTML = "<p>Nenhum usuário cadastrado ainda.</p>";
+    return;
+  }
+
+  users.sort((a, b) => b.points - a.points);
+
+  rankingList.innerHTML = "";
+
+  users.forEach((user, index) => {
+    const div = document.createElement("div");
+    div.classList.add("rank-item");
+
+    if (index < 3) div.classList.add("top");
+
+    if (user.email === currentUserEmail) {
+      div.classList.add("user-current");
     }
 
-    function getLoggedUser() {
-        return JSON.parse(localStorage.getItem("loggedUser"));
-    }
+    div.innerHTML = `
+      <span class="pos">${index + 1}º</span>
+      <span class="name">${user.name}</span>
+      <span class="pts">${user.points || 0} pts</span>
+    `;
 
-    function updateRanking() {
-
-        const rankingList = document.getElementById("ranking-list");
-        if (!rankingList) return;
-
-        let users = getUsers();
-        let loggedUser = getLoggedUser();
-
-        if (users.length === 0) {
-            rankingList.innerHTML = "<p>Nenhum usuário cadastrado ainda.</p>";
-            return;
-        }
-
-        // Ordena por pontos (maior primeiro)
-        users.sort((a, b) => b.points - a.points);
-
-        rankingList.innerHTML = "";
-
-        users.forEach((user, index) => {
-
-            const div = document.createElement("div");
-            div.classList.add("rank-item");
-
-            // Top 3 destaque
-            if (index < 3) div.classList.add("top");
-
-            // Destacar usuário logado
-            if (loggedUser && user.email === loggedUser.email) {
-                div.classList.add("user-current");
-            }
-
-            div.innerHTML = `
-                <span class="pos">${index + 1}º</span>
-                <span class="name">${user.name}</span>
-                <span class="pts">${user.points || 0} pts</span>
-            `;
-
-            rankingList.appendChild(div);
-        });
-    }
-
-    updateRanking();
-
-});
+    rankingList.appendChild(div);
+  });
+}
