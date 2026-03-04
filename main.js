@@ -511,3 +511,49 @@ if (contatoForm) {
       });
   });
 }
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    function getUsers() {
+        return JSON.parse(localStorage.getItem("users")) || [];
+    }
+
+    function updateRanking() {
+
+        const rankingList = document.getElementById("ranking-list");
+        if (!rankingList) return;
+
+        let users = getUsers();
+
+        // Se não tiver usuários cadastrados
+        if (users.length === 0) {
+            rankingList.innerHTML = "<p>Nenhum usuário cadastrado ainda.</p>";
+            return;
+        }
+
+        // Ordena do maior para o menor
+        users.sort((a, b) => b.points - a.points);
+
+        rankingList.innerHTML = "";
+
+        users.forEach((user, index) => {
+
+            const div = document.createElement("div");
+            div.classList.add("rank-item");
+
+            if (index === 0) div.classList.add("gold");
+            if (index === 1) div.classList.add("silver");
+            if (index === 2) div.classList.add("bronze");
+
+            div.innerHTML = `
+                <span class="pos">${index + 1}º</span>
+                <span class="name">${user.name}</span>
+                <span class="pts">${user.points} pts</span>
+            `;
+
+            rankingList.appendChild(div);
+        });
+    }
+
+    updateRanking();
+});
