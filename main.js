@@ -210,9 +210,18 @@ document.getElementById("register-form").addEventListener("submit", (e) => {
   );
 });
 
-function handleLogin(name, picUrl, email = "") {
+function handleLogin(name, picUrl, email = "", isAutoLogin = false) {
   isLoggedIn = true;
   currentUserEmail = email;
+  
+  localStorage.setItem("loggedInUser", JSON.stringify({ name, picUrl, email }));
+
+  let users = getUsers();
+  const userRecord = users.find(u => (email && u.email === email) || (!email && u.name === name));
+  if (userRecord && userRecord.points && isAutoLogin) {
+    userPoints = userRecord.points;
+  }
+
   authModal.classList.remove("active");
   authBtn.style.display = "none";
   const userProfile = document.getElementById("user-profile");
@@ -220,7 +229,9 @@ function handleLogin(name, picUrl, email = "") {
   document.getElementById("user-name").innerText = name;
   userProfile.style.display = "flex";
 
-  showNotification(`Bem-vindo, ${name}!`);
+  if (!isAutoLogin) {
+    showNotification(`Bem-vindo, ${name}!`);
+  }
   document.getElementById("user-name-rank").innerText = name;
 
   const nomeInput = document.getElementById("nome");
@@ -229,6 +240,7 @@ function handleLogin(name, picUrl, email = "") {
   if (emailInput && email) emailInput.value = email;
 
   updateLoyaltyUI();
+  saveOrUpdateCurrentUser();
 }
 
 // Tab System Logic
@@ -296,6 +308,7 @@ function submitReview(product, rating, comment) {
   userPoints += 5;
   showNotification(`Avaliação enviada! +5 pontos.`);
   updateLoyaltyUI();
+  saveOrUpdateCurrentUser();
 
   // Marca a missão como concluída visualmente
   const mission = document.getElementById("mission-2");
@@ -314,6 +327,7 @@ window.completeMission = (pts, elementId) => {
   userPoints += pts;
   showNotification(`Missão concluída! +${pts} pontos.`);
   updateLoyaltyUI();
+  saveOrUpdateCurrentUser();
 
   const item = document.getElementById(elementId) || event.currentTarget;
   item.style.opacity = "0.5";
@@ -331,6 +345,7 @@ window.redeemPoints = (pts, item) => {
   document.getElementById("badge-gift").classList.remove("locked");
   showNotification(`Prêmio resgatado: ${item}!`);
   updateLoyaltyUI();
+  saveOrUpdateCurrentUser();
 };
 
 // Abre Dashboard ao clicar no perfil
@@ -401,6 +416,10 @@ document.getElementById("logout-btn").addEventListener("click", (e) => {
   e.stopPropagation();
   isLoggedIn = false;
   currentUserEmail = "";
+  userPoints = 0;
+  orderHistory = [];
+  localStorage.removeItem("loggedInUser");
+  
   document.getElementById("user-profile").style.display = "none";
   authBtn.style.display = "flex";
 
@@ -409,6 +428,7 @@ document.getElementById("logout-btn").addEventListener("click", (e) => {
   if (nomeInput) nomeInput.value = "";
   if (emailInput) emailInput.value = "";
 
+  updateLoyaltyUI();
   showNotification("Você saiu da conta.");
 });
 
@@ -446,6 +466,7 @@ newCheckout.addEventListener("click", () => {
 
   orderHistory.unshift(newOrder);
   updateLoyaltyUI();
+  saveOrUpdateCurrentUser();
   showNotification(`Você ganhou ${pointsEarned} pontos!`);
 
   alert("Pedido finalizado! Preparemos seu café com carinho.");
@@ -580,3 +601,16 @@ function updateRanking() {
     rankingList.appendChild(div);
   });
 }
+
+// Auto-login on page load
+window.addEventListener('DOMContentLoaded', () => {
+  const savedUser = localStorage.getItem("loggedInUser");
+  if (savedUser) {
+    try {
+      const user = JSON.parse(savedUser);
+      handleLogin(user.name, user.picUrl, user.email, true);
+    } catch (e) {
+      console.error("Erro ao restaurar sessão:", e);
+    }
+  }
+});
