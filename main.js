@@ -165,12 +165,19 @@ let currentUserEmail = "";
 
 // Google Login Handler
 window.handleCredentialResponse = (response) => {
-  const responsePayload = decodeJwtResponse(response.credential);
-  handleLogin(
-    responsePayload.name,
-    responsePayload.picture,
-    responsePayload.email,
-  );
+  console.log("Resposta do Google recebida...");
+  try {
+    const responsePayload = decodeJwtResponse(response.credential);
+    console.log("Login Google bem-sucedido para:", responsePayload.email);
+    handleLogin(
+      responsePayload.name,
+      responsePayload.picture,
+      responsePayload.email,
+    );
+  } catch (error) {
+    console.error("Erro ao processar resposta do Google:", error);
+    alert("Erro ao processar o login com o Google. Verifique o console do navegador.");
+  }
 };
 
 function decodeJwtResponse(token) {
@@ -216,10 +223,13 @@ function handleLogin(name, picUrl, email = "", isAutoLogin = false) {
   
   localStorage.setItem("loggedInUser", JSON.stringify({ name, picUrl, email }));
 
-  let users = getUsers();
-  const userRecord = users.find(u => (email && u.email === email) || (!email && u.name === name));
-  if (userRecord && userRecord.points && isAutoLogin) {
-    userPoints = userRecord.points;
+  if (isAutoLogin && window.db && email) {
+    window.db.collection("ranking").doc(email).get().then(doc => {
+      if (doc.exists && doc.data().points) {
+        userPoints = doc.data().points;
+        updateLoyaltyUI();
+      }
+    });
   }
 
   authModal.classList.remove("active");
@@ -256,7 +266,7 @@ document.querySelectorAll(".tab-btn").forEach((btn) => {
     btn.classList.add("active");
     document.getElementById(tabId).classList.add("active");
 
-    if (tabId === "tab-ranking") updateRanking();
+    if (tabId === "tab-ranking") initMultiplayerRanking();
   });
 });
 
@@ -454,6 +464,63 @@ function updateLoyaltyUI() {
   document.getElementById("points-progress").style.width = `${progress}%`;
 
   renderHistory();
+  
+  // Persistência e Sincronização
+  localStorage.setItem("userPoints", userPoints);
+  saveOrUpdateCurrentUser();
+
+  // Se o Firebase não estiver ativo, força uma atualização local do ranking para o usuário ver
+  if (!window.db) {
+    const rankingList = document.querySelector(".ranking-list");
+    if (rankingList) {
+      // Se não houver db, renderiza os competidores offline + usuário atual
+      renderOfflineRanking(rankingList);
+    }
+  }
+}
+
+function renderOfflineRanking(container) {
+  container.innerHTML = `
+    <div class="rank-item rank-header-row">
+      <div class="rank-info">
+        <span class="pos">Pos</span>
+        <span class="name">Nome</span>
+      </div>
+      <span class="pts">Pontos</span>
+    </div>
+  `;
+
+  const currUser = {
+    name: document.getElementById("user-name")?.innerText || "Você",
+    email: currentUserEmail || "local",
+    points: userPoints
+  };
+
+  let allUsers = [...OFFLINE_COMPETITORS, currUser];
+  
+  // Remove duplicatas por email
+  const seen = new Set();
+  allUsers = allUsers.filter(u => {
+    const key = u.email || u.name;
+    const isDup = seen.has(key);
+    seen.add(key);
+    return !isDup;
+  });
+
+  allUsers.sort((a, b) => b.points - a.points);
+  const top10 = allUsers.slice(0, 10);
+
+  top10.forEach((user, index) => renderRankItem(user, index, container));
+
+  // Verifica se o usuário atual ficou fora do top 10
+  const isUserInTop10 = top10.some(u => (u.email && u.email === currentUserEmail) || (u.name === currUser.name));
+  if (isLoggedIn && !isUserInTop10) {
+    const divider = document.createElement("div");
+    divider.className = "rank-divider";
+    divider.innerText = "...";
+    container.appendChild(divider);
+    renderRankItem(currUser, "?", container);
+  }
 }
 
 function renderHistory() {
@@ -598,71 +665,153 @@ if (contatoForm) {
 
 // RANKING PONTOS 
 /* =====================================================
-   RANKING GLOBAL COM LOCALSTORAGE (CÓDIGO ÚNICO)
+   RANKING GLOBAL MULTIPLAYER COM FIREBASE
 ===================================================== */
 
-function getUsers() {
-  return JSON.parse(localStorage.getItem("users")) || [];
-}
+const OFFLINE_COMPETITORS = [
+  { name: "João Silva", points: 1250, email: "joao@exemplo.com" },
+  { name: "Maria Santos", points: 1080, email: "maria@exemplo.com" },
+  { name: "Pedro Oliveira", points: 950, email: "pedro@exemplo.com" },
+  { name: "Ana Beatriz", points: 820, email: "ana@exemplo.com" },
+  { name: "Lucas Lima", points: 450, email: "lucas@exemplo.com" }
+];
 
-function saveUsers(users) {
-  localStorage.setItem("users", JSON.stringify(users));
+// IMPORTANTE: Esta é uma configuração de exemplo. 
+// Para produção, o usuário deve usar suas próprias chaves do console.firebase.google.com
+const firebaseConfig = {
+  apiKey: "AIzaSyB-EXAMPLE-KEY",
+  authDomain: "site-caffe-ranking.firebaseapp.com",
+  projectId: "site-caffe-ranking",
+  storageBucket: "site-caffe-ranking.appspot.com",
+  messagingSenderId: "123456789",
+  appId: "1:123456789:web:abcdef123456"
+};
+
+// Inicializa Firebase (Compat Mode para Vanilla JS)
+if (typeof firebase !== 'undefined') {
+  firebase.initializeApp(firebaseConfig);
+  window.db = firebase.firestore();
+} else {
+  console.warn("Firebase não carregado. O ranking multiplayer pode não funcionar localmente.");
+  window.db = null;
 }
 
 function saveOrUpdateCurrentUser() {
-  if (!isLoggedIn || !currentUserEmail) return;
-
-  let users = getUsers();
-  const index = users.findIndex(u => u.email === currentUserEmail);
+  if (!isLoggedIn || !currentUserEmail || !window.db) return;
 
   const userData = {
     name: document.getElementById("user-name").innerText,
     email: currentUserEmail,
-    points: userPoints
+    points: userPoints,
+    lastUpdate: firebase.firestore.FieldValue.serverTimestamp()
   };
 
-  if (index !== -1) {
-    users[index] = userData;
-  } else {
-    users.push(userData);
-  }
-
-  saveUsers(users);
+  // Salva no Firestore
+  window.db.collection("ranking").doc(currentUserEmail).set(userData, { merge: true })
+    .then(() => console.log("Ranking atualizado globalmente!"))
+    .catch(err => console.error("Erro ao salvar no Firebase:", err));
 }
 
-function updateRanking() {
+// Ouvinte em Tempo Real do Firebase
+function initMultiplayerRanking() {
   const rankingList = document.querySelector(".ranking-list");
-  if (!rankingList) return;
-
-  let users = getUsers();
-
-  if (users.length === 0) {
-    rankingList.innerHTML = "<p>Nenhum usuário cadastrado ainda.</p>";
+  if (!rankingList || !window.db) {
+    if (rankingList) rankingList.innerHTML = "<p>Firebase não configurado ou indisponível.</p>";
     return;
   }
 
-  users.sort((a, b) => b.points - a.points);
+  // Evita múltiplos listeners
+  if (window.rankingListener) window.rankingListener();
 
-  rankingList.innerHTML = "";
+  window.rankingListener = window.db.collection("ranking")
+    .orderBy("points", "desc")
+    .limit(10)
+    .onSnapshot((snapshot) => {
+      rankingList.innerHTML = `
+        <div class="rank-item rank-header-row">
+          <div class="rank-info">
+            <span class="pos">Pos</span>
+            <span class="name">Nome</span>
+          </div>
+          <span class="pts">Pontos</span>
+        </div>
+      `;
 
-  users.forEach((user, index) => {
-    const div = document.createElement("div");
-    div.classList.add("rank-item");
+      const firebaseUsers = [];
+      snapshot.forEach(doc => firebaseUsers.push(doc.data()));
 
-    if (index < 3) div.classList.add("top");
+      // Mescla com competidores offline e ordena
+      let allUsers = [...firebaseUsers, ...OFFLINE_COMPETITORS];
+      
+      // Remove duplicatas se o usuário real for um dos mocks (por email)
+      const seen = new Set();
+      allUsers = allUsers.filter(u => {
+        const duplicate = seen.has(u.email);
+        seen.add(u.email);
+        return !duplicate;
+      });
 
-    if (user.email === currentUserEmail) {
-      div.classList.add("user-current");
-    }
+      allUsers.sort((a, b) => b.points - a.points);
+      const top10 = allUsers.slice(0, 10);
 
-    div.innerHTML = `
-      <span class="pos">${index + 1}º</span>
-      <span class="name">${user.name}</span>
-      <span class="pts">${user.points || 0} pts</span>
-    `;
+      // Renderiza os Top 10
+      top10.forEach((user, index) => {
+        renderRankItem(user, index, rankingList);
+      });
 
-    rankingList.appendChild(div);
-  });
+      // Se o usuário atual não estiver no top 10 do snapshot, buscamos a posição dele
+      if (isLoggedIn && currentUserEmail) {
+        const isUserInTop10 = top10.some(u => u.email === currentUserEmail);
+        if (!isUserInTop10) {
+          window.db.collection("ranking").doc(currentUserEmail).get().then(doc => {
+            if (doc.exists) {
+              // Como o Firestore não dá a posição exata sem ler tudo, 
+              // apenas mostramos ele no final se logado e fora do top 10
+              const divider = document.createElement("div");
+              divider.className = "rank-divider";
+              divider.innerText = "...";
+              rankingList.appendChild(divider);
+              renderRankItem(doc.data(), "?", rankingList);
+            }
+          });
+        }
+      }
+    });
+}
+
+// Função updateRanking foi substituída por initMultiplayerRanking com onSnapshot
+
+function renderRankItem(user, index, container) {
+  const div = document.createElement("div");
+  div.classList.add("rank-item");
+
+  let displayPos = index === "?" ? index : (index + 1) + "º";
+
+  // Destaque para o Top 3
+  if (index === 0) div.classList.add("top-1");
+  else if (index === 1) div.classList.add("top-2");
+  else if (index === 2) div.classList.add("top-3");
+
+  // Destaque para o usuário atual
+  if (isLoggedIn && user.email === currentUserEmail) {
+    div.classList.add("user-current");
+  }
+
+  // Ícones especiais para o Top 3
+  let medal = "";
+  if (index === 0) medal = "🥇 ";
+  else if (index === 1) medal = "🥈 ";
+  else if (index === 2) medal = "🥉 ";
+
+  div.innerHTML = `
+    <div class="rank-info">
+      <span class="pos">${medal}${displayPos}</span>
+      <span class="name">${user.name}${isLoggedIn && user.email === currentUserEmail ? " (Você)" : ""}</span>
+    </div>
+    <span class="pts point-pulse">${user.points || 0} pts</span>
+  `;
+
+  container.appendChild(div);
 }
 
 // Auto-login on page load
