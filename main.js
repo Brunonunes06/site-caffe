@@ -640,10 +640,20 @@ function moveCarousel(direction) {
         currentSlideIndex = totalItems - 1;
     }
 
-    // Move a "esteira" em porcentagem (ex: -100%, -200%)
-    const movePercentage = -(currentSlideIndex * 100);
-    track.style.transform = `translateX(${movePercentage}%)`;
+    // Move a "esteira" baseando-se na largura real do item
+    const itemWidth = items[0].getBoundingClientRect().width;
+    const movePx = -(currentSlideIndex * itemWidth);
+    track.style.transform = `translateX(${movePx}px)`;
 }
+
+// Redimensionar carrossel ao mudar o tamanho da janela
+window.addEventListener('resize', () => {
+    const track = document.getElementById('carousel-track');
+    const items = document.querySelectorAll('.carousel-item');
+    if (!track || items.length === 0) return;
+    const itemWidth = items[0].getBoundingClientRect().width;
+    track.style.transform = `translateX(${-(currentSlideIndex * itemWidth)}px)`;
+});
 
 // Opcional: Fazer o carrossel passar sozinho a cada 5 segundos
 // setInterval(() => moveCarousel(1), 5000); 
