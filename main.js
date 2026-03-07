@@ -215,15 +215,6 @@ function handleLogin(name, picUrl, email = "", isAutoLogin = false) {
   
   localStorage.setItem("loggedInUser", JSON.stringify({ name, picUrl, email }));
 
-  if (isAutoLogin && window.db && email) {
-    window.db.collection("ranking").doc(email).get().then(doc => {
-      if (doc.exists && doc.data().points) {
-        userPoints = doc.data().points;
-        updateLoyaltyUI();
-      }
-    });
-  }
-
   authModal.classList.remove("active");
   authBtn.style.display = "none";
   const userProfile = document.getElementById("user-profile");
@@ -234,7 +225,9 @@ function handleLogin(name, picUrl, email = "", isAutoLogin = false) {
   if (!isAutoLogin) {
     showNotification(`Bem-vindo, ${name}!`);
   }
-  document.getElementById("user-name-rank").innerText = name;
+  
+  const userRankName = document.getElementById("user-name-rank");
+  if (userRankName) userRankName.innerText = name;
 
   const nomeInput = document.getElementById("nome");
   const emailInput = document.getElementById("email");
@@ -242,7 +235,6 @@ function handleLogin(name, picUrl, email = "", isAutoLogin = false) {
   if (emailInput && email) emailInput.value = email;
 
   updateLoyaltyUI();
-  saveOrUpdateCurrentUser();
 }
 
 // Tab System Logic
@@ -370,10 +362,7 @@ if (reviewForm) {
 }
 
 function submitReview(product, rating, comment) {
-  userPoints = Number(userPoints) + 5;
-  showNotification(`Avaliação de ${rating} estrelas para ${product} enviada! +5 pontos.`);
   updateLoyaltyUI();
-  saveOrUpdateCurrentUser();
 
   // Marca a missão como concluída visualmente
   const mission = document.getElementById("mission-2");
@@ -390,10 +379,7 @@ window.completeMission = (pts, elementId) => {
     alert("Faça login para completar missões!");
     return;
   }
-  userPoints += pts;
-  showNotification(`Missão concluída! +${pts} pontos.`);
   updateLoyaltyUI();
-  saveOrUpdateCurrentUser();
 
   const item = document.getElementById(elementId) || event.currentTarget;
   item.style.opacity = "0.5";
@@ -407,11 +393,7 @@ window.redeemPoints = (pts, item) => {
     alert("Você não tem pontos suficientes!");
     return;
   }
-  userPoints -= pts;
-  document.getElementById("badge-gift").classList.remove("locked");
-  showNotification(`Prêmio resgatado: ${item}!`);
   updateLoyaltyUI();
-  saveOrUpdateCurrentUser();
 };
 
 // Abre Dashboard ao clicar no perfil
@@ -425,9 +407,12 @@ document.getElementById("user-profile").addEventListener("click", (e) => {
 });
 
 function updateLoyaltyUI() {
-  document.getElementById("user-points").innerText = userPoints;
-  document.getElementById("dash-points").innerText = `${userPoints} Pontos`;
+  const userPointsEl = document.getElementById("user-points");
+  const dashPointsEl = document.getElementById("dash-points");
   const userPtsRank = document.getElementById("user-pts-rank");
+
+  if (userPointsEl) userPointsEl.innerText = userPoints;
+  if (dashPointsEl) dashPointsEl.innerText = `${userPoints} Pontos`;
   if (userPtsRank) userPtsRank.innerText = `${userPoints} pts`;
 
   // Lógica de Níveis
@@ -436,7 +421,8 @@ function updateLoyaltyUI() {
   if (userPoints > 500) {
     tier = "Ouro";
     color = "#FFD700";
-    document.getElementById("badge-gold").classList.remove("locked");
+    const goldBadge = document.getElementById("badge-gold");
+    if (goldBadge) goldBadge.classList.remove("locked");
   } else if (userPoints > 200) {
     tier = "Prata";
     color = "#C0C0C0";
@@ -449,28 +435,27 @@ function updateLoyaltyUI() {
   }
 
   // Medalhas Automáticas
-  if (orderHistory.length > 0)
-    document.getElementById("badge-first").classList.remove("locked");
-  if (userPoints >= 100)
-    document.getElementById("badge-100").classList.remove("locked");
+  const firstBadge = document.getElementById("badge-first");
+  const hundredBadge = document.getElementById("badge-100");
+  
+  if (firstBadge && orderHistory.length > 0) firstBadge.classList.remove("locked");
+  if (hundredBadge && userPoints >= 100) hundredBadge.classList.remove("locked");
 
-  const progress = userPoints % 100;
-  document.getElementById("points-progress").style.width = `${progress}%`;
+  const progressEl = document.getElementById("points-progress");
+  if (progressEl) {
+    const progress = userPoints % 100;
+    progressEl.style.width = `${progress}%`;
+  }
 
   renderHistory();
   
-  // Persistência e Sincronização
+  // Persistência Local
   localStorage.setItem("userPoints", userPoints);
   localStorage.setItem("orderHistory", JSON.stringify(orderHistory));
-  saveOrUpdateCurrentUser();
 
-  // Se o Firebase não estiver ativo, força uma atualização local do ranking para o usuário ver
-  if (!window.db) {
-    const rankingList = document.querySelector(".ranking-list");
-    if (rankingList) {
-      // Se não houver db, renderiza os competidores offline + usuário atual
-      renderOfflineRanking(rankingList);
-    }
+  const rankingList = document.querySelector(".ranking-list");
+  if (rankingList) {
+    renderOfflineRanking(rankingList);
   }
 }
 
@@ -594,10 +579,7 @@ newCheckout.addEventListener("click", () => {
   // LIMPAR CARRINHO LOGO - ANTES DO ALERT
   cart = [];
   updateCartUI();
-  cartModal.classList.remove("active");
-
   updateLoyaltyUI();
-  saveOrUpdateCurrentUser();
   showNotification(`Você ganhou ${pointsEarned} pontos!`);
 
   setTimeout(() => {
@@ -676,107 +658,12 @@ const OFFLINE_COMPETITORS = [
   { name: "Ana Beatriz", points: 100, email: "ana@exemplo.com" },
 ];
 
-// --- CONFIGURAÇÃO DO FIREBASE (Sincronizado com seu console) ---
-const firebaseConfig = {
-  apiKey: "AIzaSyBx5CNR1aFlWUbhnk0Vn8ZqZOMhbtso8OA",
-  authDomain: "site-caffe.firebaseapp.com",
-  projectId: "site-caffe",
-  storageBucket: "site-caffe.firebasestorage.app",
-  messagingSenderId: "580876148754",
-  appId: "1:580876148754:web:30639f437f5f7672c5f8cb",
-  measurementId: "G-F7T6KM2XEL"
-};
-
-// Inicializa Firebase (Compat Mode para Vanilla JS)
-if (typeof firebase !== 'undefined') {
-  firebase.initializeApp(firebaseConfig);
-  window.db = firebase.firestore();
-} else {
-  console.warn("Firebase não carregado. O ranking multiplayer pode não funcionar localmente.");
-  window.db = null;
-}
-
-function saveOrUpdateCurrentUser() {
-  if (!isLoggedIn || !currentUserEmail || !window.db) return;
-
-  const userData = {
-    name: document.getElementById("user-name").innerText,
-    email: currentUserEmail,
-    points: userPoints,
-    lastUpdate: firebase.firestore.FieldValue.serverTimestamp()
-  };
-
-  // Salva no Firestore
-  window.db.collection("ranking").doc(currentUserEmail).set(userData, { merge: true })
-    .then(() => console.log("Ranking atualizado globalmente!"))
-    .catch(err => console.error("Erro ao salvar no Firebase:", err));
-}
-
-// Ouvinte em Tempo Real do Firebase
+// --- RANKING LOCAL ---
 function initMultiplayerRanking() {
   const rankingList = document.querySelector(".ranking-list");
-  if (!rankingList || !window.db) {
-    if (rankingList) rankingList.innerHTML = "<p>Firebase não configurado ou indisponível.</p>";
-    return;
+  if (rankingList) {
+    renderOfflineRanking(rankingList);
   }
-
-  // Evita múltiplos listeners
-  if (window.rankingListener) window.rankingListener();
-
-  window.rankingListener = window.db.collection("ranking")
-    .orderBy("points", "desc")
-    .limit(10)
-    .onSnapshot((snapshot) => {
-      rankingList.innerHTML = `
-        <div class="rank-item rank-header-row">
-          <div class="rank-info">
-            <span class="pos">Pos</span>
-            <span class="name">Nome</span>
-          </div>
-          <span class="pts">Pontos</span>
-        </div>
-      `;
-
-      const firebaseUsers = [];
-      snapshot.forEach(doc => firebaseUsers.push(doc.data()));
-
-      // Mescla com competidores offline e ordena
-      let allUsers = [...firebaseUsers, ...OFFLINE_COMPETITORS];
-      
-      // Remove duplicatas se o usuário real for um dos mocks (por email)
-      const seen = new Set();
-      allUsers = allUsers.filter(u => {
-        const duplicate = seen.has(u.email);
-        seen.add(u.email);
-        return !duplicate;
-      });
-
-      allUsers.sort((a, b) => b.points - a.points);
-      const top10 = allUsers.slice(0, 10);
-
-      // Renderiza os Top 10
-      top10.forEach((user, index) => {
-        renderRankItem(user, index, rankingList);
-      });
-
-      // Se o usuário atual não estiver no top 10 do snapshot, buscamos a posição dele
-      if (isLoggedIn && currentUserEmail) {
-        const isUserInTop10 = top10.some(u => u.email === currentUserEmail);
-        if (!isUserInTop10) {
-          window.db.collection("ranking").doc(currentUserEmail).get().then(doc => {
-            if (doc.exists) {
-              // Como o Firestore não dá a posição exata sem ler tudo, 
-              // apenas mostramos ele no final se logado e fora do top 10
-              const divider = document.createElement("div");
-              divider.className = "rank-divider";
-              divider.innerText = "...";
-              rankingList.appendChild(divider);
-              renderRankItem(doc.data(), "?", rankingList);
-            }
-          });
-        }
-      }
-    });
 }
 
 // Função updateRanking foi substituída por initMultiplayerRanking com onSnapshot
