@@ -614,3 +614,36 @@ window.addEventListener('DOMContentLoaded', () => {
     }
   }
 });
+
+/* =====================================================
+   LÓGICA DO CARROSSEL
+===================================================== */
+let currentSlideIndex = 0;
+
+function moveCarousel(direction) {
+    const track = document.getElementById('carousel-track');
+    const items = document.querySelectorAll('.carousel-item');
+    const totalItems = items.length;
+
+    // Se não existir o carrossel na página, sair da função
+    if (!track) return; 
+
+    // Calcula a nova posição
+    currentSlideIndex += direction;
+
+    // Lógica de loop (Se passar da última foto, volta pra primeira)
+    if (currentSlideIndex >= totalItems) {
+        currentSlideIndex = 0;
+    } 
+    // Se voltar antes da primeira foto, vai pra última
+    else if (currentSlideIndex < 0) {
+        currentSlideIndex = totalItems - 1;
+    }
+
+    // Move a "esteira" em porcentagem (ex: -100%, -200%)
+    const movePercentage = -(currentSlideIndex * 100);
+    track.style.transform = `translateX(${movePercentage}%)`;
+}
+
+// Opcional: Fazer o carrossel passar sozinho a cada 5 segundos
+// setInterval(() => moveCarousel(1), 5000); 

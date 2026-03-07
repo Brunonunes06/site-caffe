@@ -175,8 +175,35 @@
             <div class="divider"></div>
         </div>
         <p>Projetado para ser seu segundo lar. Perfeito para uma reunião de negócios ou uma leitura tranquila.</p>
-        <div class="interior-img">
-            <img src="space.png" alt="Interior da cafeteria Ouro Negro">
+        <div class="carousel-container">
+            <!-- Botão Voltar -->
+            <button class="carousel-btn prev-btn" onclick="moveCarousel(-1)">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+        
+            <!-- Área visível do carrossel -->
+            <div class="carousel-wrapper">
+                <div class="carousel-track" id="carousel-track">
+                    <!-- Itens do Carrossel (Pode ser imagem, texto, divs...) -->
+                    <div class="carousel-item">
+                        <img src="hero.png" alt="Imagem 1">
+                    </div>
+                    <div class="carousel-item">
+                        <img src="space.png" alt="Imagem 2">
+                    </div>
+                    <div class="carousel-item">
+                        <img src="beans.png" alt="Imagem 3">
+                    </div>
+                    <div class="carousel-item">
+                        <img src="space2.png" alt="Imagem 4">
+                    </div>
+                </div>
+            </div>
+        
+            <!-- Botão Avançar -->
+            <button class="carousel-btn next-btn" onclick="moveCarousel(1)">
+                <i class="fas fa-chevron-right"></i>
+            </button>
         </div>
     </section>
 
@@ -184,8 +211,7 @@
     <footer id="contact">
         <div class="footer-grid">
             <div class="footer-col">
-                <a href="#" class="brand" style="color: var(--white); margin-bottom: 1rem; display: block;">OURO
-                    NEGRO</a>
+                <a href="#" class="brand" style="color: var(--white); margin-bottom: 1rem; display: block;">OURO NEGRO</a>
                 <p>Elevando o padrão do seu café diário com paixão e técnica artesanal.</p>
             </div>
             <div class="footer-col">
