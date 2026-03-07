@@ -427,7 +427,8 @@ document.getElementById("user-profile").addEventListener("click", (e) => {
 function updateLoyaltyUI() {
   document.getElementById("user-points").innerText = userPoints;
   document.getElementById("dash-points").innerText = `${userPoints} Pontos`;
-  document.getElementById("user-pts-rank").innerText = `${userPoints} pts`;
+  const userPtsRank = document.getElementById("user-pts-rank");
+  if (userPtsRank) userPtsRank.innerText = `${userPoints} pts`;
 
   // Lógica de Níveis
   let tier = "Bronze";
@@ -667,22 +668,23 @@ if (contatoForm) {
    RANKING GLOBAL MULTIPLAYER COM FIREBASE
 ===================================================== */
 
+
 const OFFLINE_COMPETITORS = [
-  { name: "João Silva", points: 1250, email: "joao@exemplo.com" },
-  { name: "Maria Santos", points: 1080, email: "maria@exemplo.com" },
-  { name: "Pedro Oliveira", points: 950, email: "pedro@exemplo.com" },
-  { name: "Ana Beatriz", points: 820, email: "ana@exemplo.com" },
+  { name: "João Silva", points: 400, email: "joao@exemplo.com" },
+  { name: "Maria Santos", points: 300, email: "maria@exemplo.com" },
+  { name: "Pedro Oliveira", points: 200, email: "pedro@exemplo.com" },
+  { name: "Ana Beatriz", points: 100, email: "ana@exemplo.com" },
 ];
 
-// IMPORTANTE: Esta é uma configuração de exemplo. 
-// Para produção, o usuário deve usar suas próprias chaves do console.firebase.google.com
+// --- CONFIGURAÇÃO DO FIREBASE (Sincronizado com seu console) ---
 const firebaseConfig = {
-  apiKey: "AIzaSyB-EXAMPLE-KEY",
-  authDomain: "site-caffe-ranking.firebaseapp.com",
-  projectId: "site-caffe-ranking",
-  storageBucket: "site-caffe-ranking.appspot.com",
-  messagingSenderId: "123456789",
-  appId: "1:123456789:web:abcdef123456"
+  apiKey: "AIzaSyBx5CNR1aFlWUbhnk0Vn8ZqZOMhbtso8OA",
+  authDomain: "site-caffe.firebaseapp.com",
+  projectId: "site-caffe",
+  storageBucket: "site-caffe.firebasestorage.app",
+  messagingSenderId: "580876148754",
+  appId: "1:580876148754:web:30639f437f5f7672c5f8cb",
+  measurementId: "G-F7T6KM2XEL"
 };
 
 // Inicializa Firebase (Compat Mode para Vanilla JS)
@@ -806,7 +808,7 @@ function renderRankItem(user, index, container) {
       <span class="pos">${medal}${displayPos}</span>
       <span class="name">${user.name}${isLoggedIn && user.email === currentUserEmail ? " (Você)" : ""}</span>
     </div>
-    <span class="pts point-pulse">${user.points || 0} pts</span>
+    <span class="pts point-pulse" ${isLoggedIn && user.email === currentUserEmail ? 'id="user-pts-rank"' : ""}>${user.points || 0} pts</span>
   `;
 
   container.appendChild(div);
