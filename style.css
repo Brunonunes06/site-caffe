@@ -962,7 +962,7 @@ nav.scrolled .cart-link {
   align-items: center;
   gap: 10px;
   background: rgba(212, 163, 115, 0.15);
-  padding: 5px 15px 5px 5px;
+  padding: 5px 15px 5px 10px;
   border-radius: 50px;
   transition: var(--transition);
 }
@@ -1619,4 +1619,24 @@ nav.scrolled .user-name {
   .next-btn {
     right: 10px;
   }
+}
+
+/* Star Rating System */
+.star-rating {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    font-size: 2rem;
+    color: #ddd;
+    cursor: pointer;
+    margin-bottom: 15px;
+}
+
+.star-rating i {
+    transition: color 0.2s;
+}
+
+.star-rating i.hover,
+.star-rating i.active {
+    color: #FFD700;
 }

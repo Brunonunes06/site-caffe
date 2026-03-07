@@ -292,21 +292,84 @@ function loadRanking() {
   if (rankingList) rankingList.innerHTML = html;
 }
 
+const reviewModal = document.getElementById("review-modal");
+const closeReview = document.getElementById("close-review");
+const starRating = document.getElementById("star-rating");
+const stars = starRating ? starRating.querySelectorAll("i") : [];
+const reviewScoreInput = document.getElementById("review-score");
+
 window.showReviewModal = () => {
   if (!isLoggedIn) return alert("Faça login para avaliar!");
-  const product = prompt(
-    "Qual café você quer avaliar? (ex: Espresso, Cappuccino)",
-  );
-  if (!product) return;
-  const rating = prompt("De 1 a 5 estrelas, qual sua nota?");
-  const comment = prompt("Deixe um comentário curto:");
-
-  if (product && rating) submitReview(product, rating, comment);
+  
+  if (reviewModal) {
+    reviewModal.classList.add("active");
+    // Reset stars
+    stars.forEach(s => s.classList.remove("active"));
+    if (reviewScoreInput) reviewScoreInput.value = "";
+    document.getElementById("review-form").reset();
+  }
 };
+
+if (closeReview) {
+  closeReview.addEventListener("click", () => reviewModal.classList.remove("active"));
+}
+window.addEventListener("click", (e) => {
+  if (e.target === reviewModal) reviewModal.classList.remove("active");
+});
+
+// Star Rating Interaction
+if (stars.length > 0) {
+  stars.forEach((star) => {
+    star.addEventListener("mouseover", function() {
+      const rating = this.getAttribute("data-rating");
+      stars.forEach(s => {
+        if (s.getAttribute("data-rating") <= rating) {
+          s.classList.add("hover");
+        } else {
+          s.classList.remove("hover");
+        }
+      });
+    });
+
+    star.addEventListener("mouseout", function() {
+      stars.forEach(s => s.classList.remove("hover"));
+    });
+
+    star.addEventListener("click", function() {
+      const rating = this.getAttribute("data-rating");
+      if (reviewScoreInput) reviewScoreInput.value = rating;
+      stars.forEach(s => {
+        if (s.getAttribute("data-rating") <= rating) {
+          s.classList.add("active");
+        } else {
+          s.classList.remove("active");
+        }
+      });
+    });
+  });
+}
+
+const reviewForm = document.getElementById("review-form");
+if (reviewForm) {
+  reviewForm.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const product = document.getElementById("review-product").value;
+    const rating = reviewScoreInput.value;
+    const comment = document.getElementById("review-comment").value;
+
+    if (!rating) {
+      alert("Por favor, dê uma nota de 1 a 5 estrelas selecionando-as acima.");
+      return;
+    }
+
+    submitReview(product, rating, comment);
+    reviewModal.classList.remove("active");
+  });
+}
 
 function submitReview(product, rating, comment) {
   userPoints += 5;
-  showNotification(`Avaliação enviada! +5 pontos.`);
+  showNotification(`Avaliação de ${rating} estrelas para ${product} enviada! +5 pontos.`);
   updateLoyaltyUI();
   saveOrUpdateCurrentUser();
 
