@@ -121,16 +121,7 @@ window.changeQty = function (index, change) {
   updateCartUI();
 };
 
-document.getElementById("standard-checkout").addEventListener("click", () => {
-  if (cart.length === 0) {
-    alert("Seu carrinho está vazio!");
-    return;
-  }
-  alert("Pedido finalizado! Preparemos seu café com carinho.");
-  cart = [];
-  updateCartUI();
-  cartModal.classList.remove("active");
-});
+// Checkout logic moved to the bottom to handle loyalty integration
 
 // Auth Modal Logic
 const authBtn = document.getElementById("auth-btn");
@@ -158,8 +149,9 @@ showLogin.addEventListener("click", () => {
   loginBox.style.display = "block";
 });
 
-let userPoints = 0;
-let orderHistory = [];
+// Carrega dados iniciais do localStorage para garantir persistência básica
+let userPoints = parseInt(localStorage.getItem("userPoints")) || 0;
+let orderHistory = JSON.parse(localStorage.getItem("orderHistory")) || [];
 let isLoggedIn = false;
 let currentUserEmail = "";
 
@@ -378,7 +370,7 @@ if (reviewForm) {
 }
 
 function submitReview(product, rating, comment) {
-  userPoints += 5;
+  userPoints = Number(userPoints) + 5;
   showNotification(`Avaliação de ${rating} estrelas para ${product} enviada! +5 pontos.`);
   updateLoyaltyUI();
   saveOrUpdateCurrentUser();
@@ -388,7 +380,8 @@ function submitReview(product, rating, comment) {
   if (mission) {
     mission.style.opacity = "0.5";
     mission.style.pointerEvents = "none";
-    mission.querySelector(".miss-btn").innerText = "Concluído";
+    const missBtn = mission.querySelector(".miss-btn");
+    if (missBtn) missBtn.innerText = "Concluído";
   }
 }
 
@@ -467,6 +460,7 @@ function updateLoyaltyUI() {
   
   // Persistência e Sincronização
   localStorage.setItem("userPoints", userPoints);
+  localStorage.setItem("orderHistory", JSON.stringify(orderHistory));
   saveOrUpdateCurrentUser();
 
   // Se o Firebase não estiver ativo, força uma atualização local do ranking para o usuário ver
@@ -585,7 +579,7 @@ newCheckout.addEventListener("click", () => {
 
   const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
   const pointsEarned = Math.floor(total);
-  userPoints += pointsEarned;
+  userPoints = Number(userPoints) + pointsEarned;
 
   const newOrder = {
     id: Math.floor(Math.random() * 9000) + 1000,
@@ -595,14 +589,19 @@ newCheckout.addEventListener("click", () => {
   };
 
   orderHistory.unshift(newOrder);
+  
+  // LIMPAR CARRINHO LOGO - ANTES DO ALERT
+  cart = [];
+  updateCartUI();
+  cartModal.classList.remove("active");
+
   updateLoyaltyUI();
   saveOrUpdateCurrentUser();
   showNotification(`Você ganhou ${pointsEarned} pontos!`);
 
-  alert("Pedido finalizado! Preparemos seu café com carinho.");
-  cart = [];
-  updateCartUI();
-  cartModal.classList.remove("active");
+  setTimeout(() => {
+    alert("Pedido finalizado! Preparemos seu café com carinho.");
+  }, 100);
 });
 
 function showNotification(msg) {
@@ -673,7 +672,6 @@ const OFFLINE_COMPETITORS = [
   { name: "Maria Santos", points: 1080, email: "maria@exemplo.com" },
   { name: "Pedro Oliveira", points: 950, email: "pedro@exemplo.com" },
   { name: "Ana Beatriz", points: 820, email: "ana@exemplo.com" },
-  { name: "Lucas Lima", points: 450, email: "lucas@exemplo.com" }
 ];
 
 // IMPORTANTE: Esta é uma configuração de exemplo. 
@@ -813,6 +811,22 @@ function renderRankItem(user, index, container) {
 
   container.appendChild(div);
 }
+
+// Sincronização entre abas (Multiplayer Local Fallback)
+window.addEventListener('storage', (e) => {
+  if (e.key === "userPoints") {
+    userPoints = parseInt(e.newValue) || 0;
+    updateLoyaltyUI();
+  }
+  if (e.key === "orderHistory") {
+    orderHistory = JSON.parse(e.newValue) || [];
+    updateLoyaltyUI();
+  }
+  if (e.key === "loggedInUser" && !e.newValue) {
+    // Logout em outra aba
+    location.reload();
+  }
+});
 
 // Auto-login on page load
 window.addEventListener('DOMContentLoaded', () => {

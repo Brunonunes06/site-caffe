@@ -88,7 +88,7 @@
       <div class="menu-grid">
         <div class="menu-item">
           <h3>Espresso Intenso</h3>
-          <span class="price">R$ 8,50</span>
+          <span class="price">R$ 200,00</span>
           <img src="./espresso.png" alt="Espresso Intenso" class="img" />
           <p>
             O clássico italiano, curto e encorpado, com notas de chocolate
@@ -97,7 +97,7 @@
           <button
             class="btn add-to-cart"
             data-name="Espresso Intenso"
-            data-price="8.50"
+            data-price="200.00"
           >
             Adicionar ao Carrinho
           </button>
@@ -173,7 +173,7 @@
         </div>
         <div class="menu-item">
           <h3>Affogato Al Caffe</h3>
-          <span class="price">R$ 18,50</span>
+          <span class="price">R$ 1200,00</span>
           <img src="./affoga.png" alt="Affogato Al Caffe" class="img" />
           <p>
             Uma bola de gelato de baunilha artesanal "afogada" em um shot de
@@ -526,6 +526,7 @@
         <div class="auth-box" id="dashboard-box" style="display: none">
           <div class="dash-tabs">
             <button class="tab-btn active" data-tab="tab-perfil">Perfil</button>
+            <button class="tab-btn" data-tab="tab-historico">Pedidos</button>
             <button class="tab-btn" data-tab="tab-missoes">Missões</button>
             <button class="tab-btn" data-tab="tab-ranking">Ranking</button>
           </div>
@@ -610,7 +611,10 @@
                 </div>
               </div>
             </div>
+          </div>
 
+          <!-- Tab Histórico (Últimos Pedidos) -->
+          <div class="tab-content" id="tab-historico">
             <div class="history-section">
               <h4>Últimos Pedidos</h4>
               <div id="order-history-list">
