@@ -57,7 +57,7 @@ nav {
 }
 
 nav.scrolled {
-  background: var(--glass);
+  background: rgb(145 145 145 / 85%);
   backdrop-filter: blur(10px);
   padding: 1rem 10%;
   box-shadow: var(--shadow);
