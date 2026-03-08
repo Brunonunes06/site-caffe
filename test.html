@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Teste React + JSX</title>
+  </head>
+  <body>
+    <div id="root"></div>
+
+    <!-- Bibliotecas Necessárias -->
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <script type="text/babel">
+      const Ranking = () => {
+        // Dados simulados (Exatamente o que usamos no site)
+        const [usuarios, setUsuarios] = React.useState([
+          { id: 1, nome: "João Silva", pontos: 1250 },
+          { id: 2, nome: "Maria Oliveira", pontos: 980 },
+          { id: 3, nome: "Pedro Santos", pontos: 850 },
+          { id: 4, nome: "Ana Beatriz", pontos: 720 },
+          { id: 5, nome: "Lucas Lima", pontos: 450 },
+        ]);
+
+        return (
+          <div
+            style={{
+              fontFamily: "system-ui, sans-serif",
+              maxWidth: "400px",
+              margin: "50px auto",
+              backgroundColor: "#12121a",
+              padding: "25px",
+              borderRadius: "15px",
+              color: "#f1f5f9",
+              boxShadow: "0 10px 30px rgba(0,0,0,0.5)",
+            }}
+          >
+            <h2
+              style={{
+                textAlign: "center",
+                color: "#d4a373",
+                marginBottom: "20px",
+              }}
+            >
+              🏆 Ranking de Teste
+            </h2>
+
+            <div
+              style={{ display: "flex", flexDirection: "column", gap: "10px" }}
+            >
+              {usuarios.map((user, index) => (
+                <div
+                  key={user.id}
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    padding: "12px 15px",
+                    backgroundColor: "#1a1a28",
+                    borderRadius: "10px",
+                    border: "1px solid #2a2a3a",
+                  }}
+                >
+                  <div
+                    style={{
+                      display: "flex",
+                      gap: "10px",
+                      alignItems: "center",
+                    }}
+                  >
+                    <span
+                      style={{
+                        fontWeight: "bold",
+                        color: index < 3 ? "#d4a373" : "#64748b",
+                        width: "25px",
+                      }}
+                    >
+                      {index + 1}º
+                    </span>
+                    <span>{user.nome}</span>
+                  </div>
+                  <span style={{ fontWeight: "800", color: "#d4a373" }}>
+                    {user.pontos} pts
+                  </span>
+                </div>
+              ))}
+            </div>
+
+            <p
+              style={{
+                textAlign: "center",
+                marginTop: "20px",
+                fontSize: "12px",
+                color: "#3d3d5f",
+              }}
+            >
+              Dados renderizados via React + JSX + Babel
+            </p>
+          </div>
+        );
+      };
+
+      const root = ReactDOM.createRoot(document.getElementById("root"));
+      root.render(<Ranking />);
+    </script>
+  </body>
+</html>

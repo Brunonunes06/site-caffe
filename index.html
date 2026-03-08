@@ -22,6 +22,15 @@
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
     />
     <script src="https://accounts.google.com/gsi/client" async defer></script>
+    
+    <!-- Firebase SDK (Compat Mode for Vanilla/JSX) -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore-compat.js"></script>
+
+    <!-- React & Babel for JSX Ranking -->
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
   </head>
 
   <body>
@@ -657,30 +666,16 @@
           <!-- Tab Ranking -->
           <div class="tab-content" id="tab-ranking">
             <div class="ranking-header">
-              <h3>🏆 Ranking</h3>
+              <h3>🏆 Ranking Global</h3>
             </div>
-            <div class="ranking-list">
-              <div class="rank-item top">
-                <span class="pos">1º</span>
-                <span class="name">Ana Silva</span>
-                <span class="pts">1240 pts</span>
-              </div>
-              <div class="rank-item top">
-                <span class="pos">2º</span>
-                <span class="name">Marcos Oliveira</span>
-                <span class="pts">980 pts</span>
-              </div>
-              <div class="rank-item top">
-                <span class="pos">3º</span>
-                <span class="name">Carla Santos</span>
-                <span class="pts">850 pts</span>
-              </div>
-              <div class="rank-item user-current">
-                <span class="pos">12º</span>
-                <span class="name" id="user-name-rank">Você</span>
-                <span class="pts" id="user-pts-rank">0 pts</span>
-              </div>
-            </div>
+            <!-- Container do Ranking JSX -->
+            <div id="jsx-ranking-container"></div>
+            
+            <script type="text/babel" src="plano-escalabilidade.jsx"></script>
+            <script type="text/babel">
+              const root = ReactDOM.createRoot(document.getElementById('jsx-ranking-container'));
+              root.render(<ScalabilityApp />);
+            </script>
           </div>
         </div>
       </div>

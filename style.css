@@ -47,7 +47,7 @@ nav {
   position: fixed;
   top: 0;
   width: 100%;
-  padding: 0.3rem 3%;
+  padding: 1rem 1%;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -57,9 +57,9 @@ nav {
 }
 
 nav.scrolled {
-  background: rgb(145 145 145 / 85%);
+  background: var(--glass);
   backdrop-filter: blur(10px);
-  padding: 1rem 10%;
+  padding: 1rem 1%;
   box-shadow: var(--shadow);
 }
 

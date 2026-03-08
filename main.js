@@ -452,6 +452,9 @@ function updateLoyaltyUI() {
   // Persistência Local
   localStorage.setItem("userPoints", userPoints);
   localStorage.setItem("orderHistory", JSON.stringify(orderHistory));
+  
+  // Trigger update for JSX Ranking
+  window.dispatchEvent(new CustomEvent("pointsUpdated", { detail: { points: userPoints } }));
 
   const rankingList = document.querySelector(".ranking-list");
   if (rankingList) {
