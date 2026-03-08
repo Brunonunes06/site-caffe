@@ -120,7 +120,7 @@ function GlobalRanking() {
   return (
     <div style={{ 
       fontFamily: 'system-ui, sans-serif', 
-      backgroundColor: '#12121a',
+      backgroundColor: 'transparent',
       padding: '20px',
       borderRadius: '15px',
       color: '#f1f5f9'
@@ -143,7 +143,7 @@ function GlobalRanking() {
         {currentUser && (
           <button 
             onClick={() => syncPointsToFirebase(currentUser, parseInt(localStorage.getItem("userPoints")) || 0)}
-            style={{ background: "#1e1e2e", border: "1px solid #3d3d5f", color: "#d4a373", fontSize: "10px", padding: "4px 10px", borderRadius: "6px", cursor: "pointer", fontWeight: "bold" }}
+            style={{ background: "rgba(30, 30, 46, 0.5)", border: "1px solid rgba(61, 61, 95, 0.5)", color: "#d4a373", fontSize: "10px", padding: "4px 10px", borderRadius: "6px", cursor: "pointer", fontWeight: "bold" }}
           >
             Sincronizar
           </button>
@@ -172,9 +172,9 @@ function GlobalRanking() {
                     justifyContent: "space-between", 
                     alignItems: "center", 
                     padding: "12px 15px", 
-                    backgroundColor: "#1a1a28", 
+                    backgroundColor: isMe ? "rgba(26, 26, 40, 0.6)" : "rgba(26, 26, 40, 0.4)", 
                     borderRadius: "10px",
-                    border: isMe ? "1px solid #d4a373" : "1px solid #2a2a3a",
+                    border: isMe ? "1px solid #d4a373" : "1px solid rgba(42, 42, 58, 0.3)",
                     animationDelay: `${index * 0.05}s`
                   }}
                 >
