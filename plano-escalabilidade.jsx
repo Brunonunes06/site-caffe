@@ -129,13 +129,13 @@ function GlobalRanking() {
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         .rank-row { animation: fadeIn 0.4s ease forwards; opacity: 0; }
         .gold-glow { box-shadow: 0 0 15px rgba(212, 163, 115, 0.2); border: 1px solid rgba(212, 163, 115, 0.4) !important; }
-        .point-pulse { font-weight: 800; color: #d4a373; animation: pulse 2s infinite; }
+        .point-pulse { font-weight: 800; color: #000000ff; animation: pulse 2s infinite; }
         @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.7; } 100% { opacity: 1; } }
       `}</style>
 
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "20px" }}>
         <div>
-          <h2 style={{ fontFamily: "'Syne', sans-serif", fontWeight: 800, fontSize: "20px", margin: 0, color: '#d4a373' }}>🏆 Ranking Global</h2>
+          <h2 style={{ fontFamily: "'Syne', sans-serif", fontWeight: 800, fontSize: "20px", margin: 0, color: '#000000ff' }}>🏆 Ranking Global</h2>
           <p style={{ fontSize: "11px", color: "#64748b", margin: "4px 0 0 0" }}>
             {error ? "Modo Offline" : "Top Competidores"}
           </p>
@@ -143,7 +143,7 @@ function GlobalRanking() {
         {currentUser && (
           <button 
             onClick={() => syncPointsToFirebase(currentUser, parseInt(localStorage.getItem("userPoints")) || 0)}
-            style={{ background: "rgba(30, 30, 46, 0.5)", border: "1px solid rgba(61, 61, 95, 0.5)", color: "#d4a373", fontSize: "10px", padding: "4px 10px", borderRadius: "6px", cursor: "pointer", fontWeight: "bold" }}
+            style={{ background: "rgba(30, 30, 46, 0.5)", border: "1px solid rgba(61, 61, 95, 0.5)", color: "#000000ff", fontSize: "10px", padding: "4px 10px", borderRadius: "6px", cursor: "pointer", fontWeight: "bold" }}
           >
             Sincronizar
           </button>
@@ -158,7 +158,7 @@ function GlobalRanking() {
             {ranking.slice(0, 5).map((user, index) => {
               const isMe = currentUser && user.email === currentUser.email;
               let medal = "";
-              let color = index < 3 ? "#d4a373" : "#64748b";
+              let color = index < 3 ? "#000000ff" : "#64748b";
               if (index === 0) medal = "🥇 ";
               else if (index === 1) medal = "🥈 ";
               else if (index === 2) medal = "🥉 ";
@@ -174,7 +174,7 @@ function GlobalRanking() {
                     padding: "12px 15px", 
                     backgroundColor: isMe ? "rgba(26, 26, 40, 0.6)" : "rgba(26, 26, 40, 0.4)", 
                     borderRadius: "10px",
-                    border: isMe ? "1px solid #d4a373" : "1px solid rgba(42, 42, 58, 0.3)",
+                    border: isMe ? "1px solid #000000ff" : "1px solid rgba(113, 113, 122, 0.3)",
                     animationDelay: `${index * 0.05}s`
                   }}
                 >
@@ -186,7 +186,7 @@ function GlobalRanking() {
                       {user.name} {isMe && "(Você)"}
                     </span>
                   </div>
-                  <span className="point-pulse" style={{ fontSize: "14px", color: "#d4a373", fontWeight: "800" }}>
+                  <span className="point-pulse" style={{ fontSize: "14px", color: "#000000ff", fontWeight: "800" }}>
                     {(user.points || 0).toLocaleString('pt-BR')} pts
                   </span>
                 </div>
@@ -206,7 +206,7 @@ function GlobalRanking() {
                     padding: "12px 15px", 
                     background: "#1a1a28", 
                     borderRadius: "10px",
-                    border: "1px solid #d4a373",
+                    border: "1px solid #000000ff",
                     animationDelay: "0.3s"
                   }}
                 >
@@ -216,7 +216,7 @@ function GlobalRanking() {
                       {currentUser.name} (Você)
                     </span>
                   </div>
-                  <span className="point-pulse" style={{ fontSize: "13px", color: "#d4a373", fontWeight: "800" }}>
+                  <span className="point-pulse" style={{ fontSize: "13px", color: "#000000ff", fontWeight: "800" }}>
                     {(parseInt(localStorage.getItem("userPoints")) || 0).toLocaleString('pt-BR')} pts
                   </span>
                 </div>
