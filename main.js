@@ -193,7 +193,7 @@ document.getElementById("login-form").addEventListener("submit", (e) => {
   const name = email.split("@")[0];
   handleLogin(
     name,
-    "https://ui-avatars.com/api/?name=" + name + "&background=D4A373&color=fff",
+    "https://ui-avatars.com/api/?name=" + name + "&background=000&color=fff",
     email,
   );
 });
@@ -204,7 +204,7 @@ document.getElementById("register-form").addEventListener("submit", (e) => {
   const email = e.target.querySelector('input[type="email"]').value;
   handleLogin(
     name,
-    "https://ui-avatars.com/api/?name=" + name + "&background=D4A373&color=fff",
+    "https://ui-avatars.com/api/?name=" + name + "&background=000&color=fff",
     email,
   );
 });
@@ -415,17 +415,17 @@ function updateLoyaltyUI() {
   if (dashPointsEl) dashPointsEl.innerText = `${userPoints} Pontos`;
   if (userPtsRank) userPtsRank.innerText = `${userPoints} pts`;
 
-  // Lógica de Níveis
+  // Lógica de Níveis (Escala Monocromática Premium)
   let tier = "Bronze";
-  let color = "#CD7F32";
+  let color = "#cbd5e1"; // Silver-Gray
   if (userPoints > 500) {
-    tier = "Ouro";
-    color = "#FFD700";
+    tier = "Ouro Platinum";
+    color = "#000000"; // Black
     const goldBadge = document.getElementById("badge-gold");
     if (goldBadge) goldBadge.classList.remove("locked");
   } else if (userPoints > 200) {
-    tier = "Prata";
-    color = "#C0C0C0";
+    tier = "Prata Elite";
+    color = "#94a3b8"; // Steel Gray
   }
 
   const tierEl = document.getElementById("user-tier");

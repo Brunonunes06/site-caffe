@@ -1,16 +1,16 @@
 @import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap");
 
 :root {
-  --primary: #2c1e12;
-  --secondary: #7b5e43;
-  --accent: #d4a373;
-  --bg: #fdf8f3;
-  --text: #3d2b1f;
-  --text-light: #8d7b6d;
+  --primary: #000000;
+    --secondary: #1e293b;
+    --accent: #94a3b8;
+    --bg: #fcfcfc;
+    --text: #020617;
+    --text-light: #64748b;
   --white: #ffffff;
   --glass: rgba(255, 255, 255, 0.85);
   --transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  --shadow: 0 10px 30px rgba(44, 30, 18, 0.08);
+  --shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
 }
 
 * {
@@ -317,7 +317,7 @@ section {
   display: flex;
   align-items: center;
   gap: 5rem;
-  background: #f9f3ee;
+  background: #f1f5f9;
 }
 
 .about-img {
@@ -343,7 +343,7 @@ section {
 /* Interior Section */
 .interior {
   background:
-    linear-gradient(rgba(44, 30, 18, 0.9), rgba(44, 30, 18, 0.9)),
+    linear-gradient(rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0.9)),
     url("beans.png");
   background-size: cover;
   background-attachment: fixed;
@@ -421,7 +421,7 @@ footer {
 
 .footer-col p,
 .footer-col a {
-  color: #a89587;
+  color: #64748b;
   text-decoration: none;
   font-size: 0.9rem;
   display: block;
@@ -438,7 +438,12 @@ footer {
   padding-top: 2rem;
   border-top: 1px solid rgba(255, 255, 255, 0.1);
   font-size: 0.8rem;
-  color: #8d7b6d;
+  color: #64748b;
+  }
+  
+  .mission-item {
+    background: #fcfcfc;
+    border: 1px solid #e2e8f0;
 }
 
 /* Animations */
@@ -716,7 +721,7 @@ footer {
   display: flex;
   align-items: center;
   gap: 1rem;
-  background: #f9f3ee;
+  background: #f1f5f9;
   padding: 0.5rem 1rem;
   border-radius: 50px;
 }
