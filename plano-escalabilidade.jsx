@@ -27,25 +27,38 @@ if (!firebase.apps.length) {
 }
 const db = firebase.firestore();
 
-export default function GlobalRanking() {
+function GlobalRanking() {
   const [ranking, setRanking] = useState([]);
   const [loading, setLoading] = useState(true);
   const [currentUser, setCurrentUser] = useState(null);
   const [error, setError] = useState(null);
 
+  // Efeito para carregar usuário e escutar mudanças
   useEffect(() => {
-    const savedUser = localStorage.getItem("loggedInUser");
-    if (savedUser) {
-      const user = JSON.parse(savedUser);
-      setCurrentUser(user);
-      const currentPoints = parseInt(localStorage.getItem("userPoints")) || 0;
-      syncPointsToFirebase(user, currentPoints);
-    }
+    console.log("Ranking: Iniciando componente...");
+    
+    const loadUser = () => {
+      const savedUser = localStorage.getItem("loggedInUser");
+      if (savedUser) {
+        const user = JSON.parse(savedUser);
+        console.log("Ranking: Usuário detectado:", user.email);
+        setCurrentUser(user);
+        const currentPoints = parseInt(localStorage.getItem("userPoints")) || 0;
+        syncPointsToFirebase(user, currentPoints);
+      } else {
+        console.log("Ranking: Nenhum usuário logado");
+        setCurrentUser(null);
+      }
+    };
 
+    loadUser();
+
+    // Listener para o ranking no Firestore
     const unsubscribe = db.collection("ranking")
       .orderBy("points", "desc")
       .limit(10)
       .onSnapshot((snapshot) => {
+        console.log("Ranking: Snapshot recebido do Firebase");
         if (!snapshot.empty) {
           const data = snapshot.docs.map(doc => ({
             id: doc.id,
@@ -54,42 +67,55 @@ export default function GlobalRanking() {
           setRanking(data);
           setError(null);
         } else {
+          console.warn("Ranking: Banco vazio, usando fallbacks");
           setRanking(RANKING_FALLBACK_DATA);
         }
         setLoading(false);
       }, (err) => {
+        console.error("Ranking: Erro Firebase:", err);
         setError("Offline");
         setRanking(RANKING_FALLBACK_DATA);
         setLoading(false);
       });
 
-    return () => unsubscribe();
+    // Eventos globais do site
+    const handlePointsUpdate = (e) => {
+      console.log("Ranking: Evento pointsUpdated capturado");
+      const savedUser = localStorage.getItem("loggedInUser");
+      if (savedUser) {
+        const user = JSON.parse(savedUser);
+        setCurrentUser(user);
+        syncPointsToFirebase(user, e.detail.points || parseInt(localStorage.getItem("userPoints")) || 0);
+      }
+    };
+
+    const handleStorage = (e) => {
+      if (e.key === "loggedInUser") {
+        console.log("Ranking: Mudança de login detectada");
+        loadUser();
+      }
+    };
+
+    window.addEventListener("pointsUpdated", handlePointsUpdate);
+    window.addEventListener("storage", handleStorage);
+
+    return () => {
+      unsubscribe();
+      window.removeEventListener("pointsUpdated", handlePointsUpdate);
+      window.removeEventListener("storage", handleStorage);
+    };
   }, []);
 
   const syncPointsToFirebase = (user, points) => {
     if (!user || !user.email) return;
+    console.log(`Ranking: Sincronizando ${user.email} -> ${points} pts`);
     db.collection("ranking").doc(user.email).set({
       name: user.name,
       email: user.email,
       points: points || 0,
       lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
-    }, { merge: true }).catch(err => console.error("Erro ao sincronizar:", err));
+    }, { merge: true }).catch(err => console.error("Ranking: Erro sync:", err));
   };
-
-  useEffect(() => {
-    if (!currentUser) return;
-    const handleStorageChange = (e) => {
-      if (e.key === "userPoints") syncPointsToFirebase(currentUser, parseInt(e.newValue));
-      if (e.key === "loggedInUser") setCurrentUser(e.newValue ? JSON.parse(e.newValue) : null);
-    };
-    const handleCustomEvent = (e) => syncPointsToFirebase(currentUser, e.detail.points);
-    window.addEventListener("storage", handleStorageChange);
-    window.addEventListener("pointsUpdated", handleCustomEvent);
-    return () => {
-      window.removeEventListener("storage", handleStorageChange);
-      window.removeEventListener("pointsUpdated", handleCustomEvent);
-    };
-  }, [currentUser]);
 
   return (
     <div style={{ 
@@ -146,7 +172,7 @@ export default function GlobalRanking() {
                     justifyContent: "space-between", 
                     alignItems: "center", 
                     padding: "12px 15px", 
-                    backgroundColor: isMe ? "#1a1a28" : "#1a1a28", 
+                    backgroundColor: "#1a1a28", 
                     borderRadius: "10px",
                     border: isMe ? "1px solid #d4a373" : "1px solid #2a2a3a",
                     animationDelay: `${index * 0.05}s`
@@ -207,6 +233,18 @@ export default function GlobalRanking() {
   );
 }
 
-if (typeof window !== 'undefined') {
-  window.ScalabilityApp = GlobalRanking;
+// Inicialização robusta do React
+function initRanking() {
+  const container = document.getElementById('jsx-ranking-container');
+  if (container) {
+    console.log("Ranking: Montando componente no container...");
+    const root = ReactDOM.createRoot(container);
+    root.render(<GlobalRanking />);
+  } else {
+    // Tenta novamente em 500ms se o container ainda não existir
+    console.warn("Ranking: Container não encontrado, tentando novamente em 500ms...");
+    setTimeout(initRanking, 500);
+  }
 }
+
+initRanking();

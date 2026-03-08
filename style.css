@@ -61,8 +61,7 @@ nav.scrolled {
   backdrop-filter: blur(10px);
   padding: 1rem 1%;
   box-shadow: var(--shadow);
-}
-
+} 
 .brand {
   font-size: 1.8rem;
   font-weight: 700;

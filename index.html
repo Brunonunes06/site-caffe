@@ -22,14 +22,20 @@
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
     />
     <script src="https://accounts.google.com/gsi/client" async defer></script>
-    
+
     <!-- Firebase SDK (Compat Mode for Vanilla/JSX) -->
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore-compat.js"></script>
 
     <!-- React & Babel for JSX Ranking -->
-    <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
-    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+    <script
+      src="https://unpkg.com/react@18/umd/react.production.min.js"
+      crossorigin
+    ></script>
+    <script
+      src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"
+      crossorigin
+    ></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
   </head>
 
@@ -106,7 +112,8 @@
           <button
             class="btn add-to-cart"
             data-name="Espresso Intenso"
-            data-price="100.00">
+            data-price="100.00"
+          >
             Adicionar ao Carrinho
           </button>
         </div>
@@ -121,7 +128,8 @@
           <button
             class="btn add-to-cart"
             data-name="Latte Art Premium"
-            data-price="14.00">
+            data-price="14.00"
+          >
             Adicionar ao Carrinho
           </button>
         </div>
@@ -136,7 +144,8 @@
           <button
             class="btn add-to-cart"
             data-name="Cappuccino Trufado"
-            data-price="16.50">
+            data-price="16.50"
+          >
             Adicionar ao Carrinho
           </button>
         </div>
@@ -155,7 +164,8 @@
           <button
             class="btn add-to-cart"
             data-name="Cold Brew Citrus"
-            data-price="15.00">
+            data-price="15.00"
+          >
             Adicionar ao Carrinho
           </button>
         </div>
@@ -171,7 +181,8 @@
           <button
             class="btn add-to-cart"
             data-name="Mocha Branco"
-            data-price="17.00">
+            data-price="17.00"
+          >
             Adicionar ao Carrinho
           </button>
         </div>
@@ -186,7 +197,8 @@
           <button
             class="btn add-to-cart"
             data-name="Affogato Al Caffe"
-            data-price="18.50">
+            data-price="18.50"
+          >
             Adicionar ao Carrinho
           </button>
         </div>
@@ -201,7 +213,8 @@
           <button
             class="btn add-to-cart"
             data-name="Café Royale Gelato"
-            data-price="14.90">
+            data-price="14.90"
+          >
             Adicionar ao Carrinho
           </button>
         </div>
@@ -217,7 +230,8 @@
           <button
             class="btn add-to-cart"
             data-name="Chá Imperial D’Oro"
-            data-price="12.50">
+            data-price="12.50"
+          >
             Adicionar ao Carrinho
           </button>
         </div>
@@ -232,7 +246,8 @@
           <button
             class="btn add-to-cart"
             data-name="Berry Delight"
-            data-price="18.00">
+            data-price="18.00"
+          >
             Adicionar ao Carrinho
           </button>
         </div>
@@ -666,16 +681,11 @@
           <!-- Tab Ranking -->
           <div class="tab-content" id="tab-ranking">
             <div class="ranking-header">
-              <h3>🏆 Ranking Global</h3>
+              <!-- Container do Ranking JSX -->
+              <div id="jsx-ranking-container"></div>
+
+              <script type="text/babel" src="plano-escalabilidade.jsx"></script>
             </div>
-            <!-- Container do Ranking JSX -->
-            <div id="jsx-ranking-container"></div>
-            
-            <script type="text/babel" src="plano-escalabilidade.jsx"></script>
-            <script type="text/babel">
-              const root = ReactDOM.createRoot(document.getElementById('jsx-ranking-container'));
-              root.render(<ScalabilityApp />);
-            </script>
           </div>
         </div>
       </div>
@@ -752,7 +762,6 @@
         </div>
       </div>
     </div>
-
 
     <script src="main.js"></script>
   </body>

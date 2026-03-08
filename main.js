@@ -250,7 +250,7 @@ document.querySelectorAll(".tab-btn").forEach((btn) => {
     btn.classList.add("active");
     document.getElementById(tabId).classList.add("active");
 
-    if (tabId === "tab-ranking") initMultiplayerRanking();
+    // O ranking agora inicia automaticamente via React no plano-escalabilidade.jsx
   });
 });
 
