@@ -256,23 +256,24 @@ document.querySelectorAll(".tab-btn").forEach((btn) => {
 
 function loadRanking() {
   const rankingList = document.querySelector(".ranking-list");
-  // let html = `
-  //               <div class="rank-item top">
-  //                   <span class="pos">1º</span>
-  //                   <span class="name">Ana Silva</span>
-  //                   <span class="pts">1240 pts</span>
-  //               </div>
-  //               <div class="rank-item top">
-  //                   <span class="pos">2º</span>
-  //                   <span class="name">Marcos Oliveira</span>
-  //                   <span class="pts">980 pts</span>
-  //               </div>
-  //               <div class="rank-item top">
-  //                   <span class="pos">3º</span>
-  //                   <span class="name">Carla Santos</span>
-  //                   <span class="pts">850 pts</span>
-  //               </div>
-  //           `;
+  // ALTERADO
+  let html = `
+                <div class="rank-item top">
+                    <span class="pos">1º</span>
+                    <span class="name">Ana Silva</span>
+                    <span class="pts">1240 pts</span>
+                </div>
+                <div class="rank-item top">
+                    <span class="pos">2º</span>
+                    <span class="name">Marcos Oliveira</span>
+                    <span class="pts">980 pts</span>
+                </div>
+                <div class="rank-item top">
+                    <span class="pos">3º</span>
+                    <span class="name">Carla Santos</span>
+                    <span class="pts">850 pts</span>
+                </div>
+            `;
 
   if (isLoggedIn) {
     html += `
